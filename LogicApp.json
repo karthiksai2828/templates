@@ -508,11 +508,7 @@
         "Project Request Reference": "[parameters('projectRequestReference')]",
         "Resource SME": "[parameters('resourceSME')]",
         "Resource Owner": "[parameters('resourceOwner')]"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/connections', parameters('connections_cds_name'))]",
-        "[resourceId('Microsoft.Web/connections', parameters('connections_azuread_name'))]"
-      ]
+      }      
     }    
   ]
 }
