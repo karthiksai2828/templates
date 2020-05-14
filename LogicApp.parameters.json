@@ -1,0 +1,45 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    //"workflows_ValidateContactAndAddAsPortalUser_name": {
+    //  "value": "\"ValidateContactAndAddAsPortalUserTestDep"
+    //},
+    "connections_azuread_name": {
+      "value": "azuread"
+    },
+    "connections_cds_name": {
+      "value": "commondataservice"
+    },
+    //"LogicAppLocation": {
+    //  "value": "australiaeast"
+    //},
+    "workload": {
+      "value": "azurelab1"
+    },
+    "organisation": {
+      "value": "bslau"
+    },
+    "environmentType": {
+      "value": "dev"
+    },
+    "environmentName": {
+      "value": "Development"
+    },
+    "regionCode": {
+      "value": "aes"
+    },
+    "workspaceName": {
+      "value": "workplace-shared-oms-bslau-dev-ase"
+    },
+    "workspaceResourceGroup": {
+      "value": "workplace-shared-rg01-bslau-dev"
+    },
+    "logicAppState": {
+      "value": "Enabled"
+    },
+    "region": {
+      "value": "australiaeast"
+    }
+  }
+}

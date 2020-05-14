@@ -1,0 +1,67 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "connections_azuread_externalid": {
+      "defaultValue": "/subscriptions/90075c84-14cb-472a-95ae-66f6bf3ab137/resourceGroups/d365-rg01-bslau-dev/providers/Microsoft.Web/connections/azuread",
+      "type": "String"
+    },
+    "connections_commondataservice_externalid": {
+      "defaultValue": "/subscriptions/90075c84-14cb-472a-95ae-66f6bf3ab137/resourceGroups/d365-rg01-bslau-dev/providers/Microsoft.Web/connections/commondataservice",
+      "type": "String"
+    },
+    "connections_azuread_name": {
+      "defaultValue": "azuread",
+      "type": "String"
+    },
+    "connections_cds_name": {
+      "defaultValue": "commondataservice",
+      "type": "String"
+    },
+    "LogicAppLocation": {
+      "type": "string",
+      "minLength": 1,
+      "allowedValues": [
+        "[resourceGroup().location]",
+        "australiaeast"
+      ],
+      "defaultValue": "australiaeast"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2018-07-01-preview",
+      "name": "[parameters('connections_azuread_name')]",
+      "location": "[parameters('logicAppLocation')]",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/', 'azuread')]"
+        },
+        "displayName": "[parameters('connections_azuread_name')]",
+        "nonSecretParameterValues": {
+          "token:TenantId": "[parameters('connections_azuread_externalid')]"
+        }
+      }
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2018-07-01-preview",
+      "name": "[parameters('connections_cds_name')]",
+      "location": "[parameters('logicAppLocation')]",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/', 'commondataservice')]"
+        },
+        "displayName": "[parameters('connections_cds_name')]",
+        "nonSecretParameterValues": {
+          "environment": "[parameters('connections_commondataservice_externalid')]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+  }
+}

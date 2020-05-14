@@ -1,0 +1,21 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "connections_azuread_externalid": {
+      "value": "/subscriptions/90075c84-14cb-472a-95ae-66f6bf3ab137/resourceGroups/d365-rg01-bslau-dev/providers/Microsoft.Web/connections/azuread"
+    },
+    "connections_commondataservice_externalid": {
+      "value": "/subscriptions/90075c84-14cb-472a-95ae-66f6bf3ab137/resourceGroups/d365-rg01-bslau-dev/providers/Microsoft.Web/connections/commondataservice"
+    },
+    "LogicAppLocation": {
+      "value": "australiaeast"
+    },
+    "connections_azuread_name": {
+      "value": "azuread"
+    },
+    "connections_cds_name": {
+      "value": "commondataservice"
+    }
+  }
+}
