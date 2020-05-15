@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
@@ -16,6 +16,30 @@
     },
     "connections_cds_name": {
       "value": "commondataservice"
+    },
+    "azureblob_1_Connection_Name": {
+      "value": "azureblob"
+    },
+    "azureblob_1_Connection_DisplayName": {
+      "value": "d365_portal2_bslau_dev"
+    },
+    "azureblob_1_accountName": {
+      "value": "d365ssendstorbslaudevaes"
+    },
+    "azureblob_1_accessKey": {
+      "value": "d365ssendstorbslaudevaes"
+    },
+    "AzureBlobStorage": {
+      "value": {
+        "azureblob": "azureblob",
+        "name": "co-aue-fcs-azureblob",
+        "storageAccountName": "d365ssendstorbslaudevaes",
+        "storageAccountType": "Standard_LRS",
+        "containerName": "d365-fotoportalpdf"
+        //"extractDirectory": "VendorsDeltaFile",
+        //"errorDirectory": "FailedRuns",
+        //"outputFile": "Vendors extract to CE.csv"
+      }
     }
   }
 }
