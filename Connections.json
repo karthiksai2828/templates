@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
@@ -26,6 +26,30 @@
         "australiaeast"
       ],
       "defaultValue": "australiaeast"
+    },
+    "azureblob_1_Connection_Name": {
+      "type": "string",
+      "defaultValue": "azureblob"
+    },
+    "azureblob_1_Connection_DisplayName": {
+      "type": "string",
+      "defaultValue": "d365_portal2_bslau_dev"
+    },
+    "azureblob_1_accountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the storage account the connector should use."
+      },
+      "defaultValue": "d365ssendstorbslaudevaes"
+    },
+    "azureblob_1_accessKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Specify a valid primary/secondary storage account access key."
+      }
+    },
+    "AzureBlobStorage": {
+      "type": "object"
     }
   },
   "variables": {
@@ -40,10 +64,10 @@
         "api": {
           "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/', 'azuread')]"
         },
-        "displayName": "[parameters('connections_azuread_name')]",
-        "nonSecretParameterValues": {
-          "token:TenantId": "[parameters('connections_azuread_externalid')]"
-        }
+        "displayName": "[parameters('connections_azuread_name')]"
+        //"nonSecretParameterValues": {
+        //  "token:TenantId": "[parameters('connections_azuread_externalid')]"
+        //}
       }
     },
     {
@@ -55,9 +79,25 @@
         "api": {
           "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/', 'commondataservice')]"
         },
-        "displayName": "[parameters('connections_cds_name')]",
-        "nonSecretParameterValues": {
-          "environment": "[parameters('connections_commondataservice_externalid')]"
+        "displayName": "[parameters('connections_cds_name')]"
+        //"nonSecretParameterValues": {
+        //  "environment": "[parameters('connections_commondataservice_externalid')]"
+        //}
+      }
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2018-07-01-preview",
+      "name": "[parameters('azureblob_1_Connection_Name')]",
+      "location": "australiaeast",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'azureblob')]"
+        },
+        "displayName": "[parameters('azureblob_1_Connection_DisplayName')]",
+        "parameterValues": {
+          "accountName": "[parameters('azureblob_1_accountName')]",
+          "accessKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', parameters('AzureBlobStorage')['storageAccountName']), '2017-06-01').keys[0].value]"
         }
       }
     }
