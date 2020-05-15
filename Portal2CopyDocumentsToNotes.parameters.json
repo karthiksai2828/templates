@@ -1,0 +1,39 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logicapp_name": {
+      "value": "copydocuments"
+    },
+    "connections_cds_name": {
+      "value": "commondataservice"
+    },
+    "workload": {
+      "value": "PowerPortal"
+    },
+    "organisation": {
+      "value": "bslau"
+    },
+    "environmentType": {
+      "value": "dev"
+    },
+    "environmentName": {
+      "value": "Development"
+    },
+    "regionCode": {
+      "value": "aes"
+    },
+    "workspaceName": {
+      "value": "workplace-shared-oms-bslau-dev-ase"
+    },
+    "workspaceResourceGroup": {
+      "value": "workplace-shared-rg01-bslau-dev"
+    },
+    "logicAppState": {
+      "value": "Enabled"
+    },
+    "region": {
+      "value": "australiaeast"
+    }
+  }
+}

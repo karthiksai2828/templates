@@ -1,0 +1,1615 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logicapp_name": {
+      "defaultValue": "copydocuments2portal",
+      "type": "string"
+    },
+    "azureblob_1_Connection_Name": {
+      "type": "string",
+      "defaultValue": "azureblob"
+    },
+    "azureblob_1_Connection_DisplayName": {
+      "type": "string",
+      "defaultValue": "d365_portal2_bslau_dev"
+    },
+    "azureblob_1_accountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the storage account the connector should use."
+      },
+      "defaultValue": "d365ssendstorbslaudevaes"
+    },
+    "azureblob_1_accessKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Specify a valid primary/secondary storage account access key."
+      }
+    },
+    "connections_cds_name": {
+      "type": "string",
+      "defaultValue": "commondataservice"
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "australiaeast",
+      "metadata": {
+        "description": "The Azure region that the resource is deployed to."
+      },
+      "allowedValues": [
+        "eastasia",
+        "southeastasia",
+        "centralus",
+        "eastus",
+        "eastus2",
+        "westus",
+        "northcentralus",
+        "southcentralus",
+        "northeurope",
+        "westeurope",
+        "japanwest",
+        "japaneast",
+        "brazilsouth",
+        "australiaeast",
+        "australiasoutheast",
+        "southindia",
+        "centralindia",
+        "westindia",
+        "canadacentral",
+        "canadaeast",
+        "uksouth",
+        "ukwest",
+        "westcentralus",
+        "westus2",
+        "[resourceGroup().location]"
+      ]
+    },
+    "workload": {
+      "type": "string",
+      "defaultValue": "workplace-cntntf",
+      "metadata": {
+        "description": "The broad purpose of the resource."
+      }
+    },
+    "organisation": {
+      "type": "string",
+      "defaultValue": "bslau",
+      "metadata": {
+        "description": "The organisation that the resource group or resource is owned by."
+      }
+    },
+    "environmentType": {
+      "type": "string",
+      "defaultValue": "dev",
+      "metadata": {
+        "description": "Whether this resource is Dev/Test/Prod/etc."
+      },
+      "allowedValues": [
+        "dev",
+        "tst",
+        "prod",
+        "can"
+      ]
+    },
+    "regionCode": {
+      "type": "string",
+      "defaultValue": "aes",
+      "metadata": {
+        "description": "The Azure region code that the resource is deployed to."
+      },
+      "allowedValues": [
+        "eas",
+        "sea",
+        "cus",
+        "eus",
+        "eus2",
+        "wus",
+        "nus",
+        "sus",
+        "neu",
+        "weu",
+        "jws",
+        "jes",
+        "brs",
+        "aes",
+        "ase",
+        "sin",
+        "cin",
+        "win",
+        "ccn",
+        "ces",
+        "uks",
+        "ukw",
+        "wcu",
+        "wus2"
+      ]
+    },
+    "chargeTo": {
+      "type": "string",
+      "defaultValue": "NOT_SET",
+      "metadata": {
+        "description": "The cost centre that the resource group or resource should be billed to."
+      }
+    },
+    "department": {
+      "type": "string",
+      "defaultValue": "NOT_SET",
+      "metadata": {
+        "description": "The name of the department the resource group or resource was provisioned for."
+      }
+    },
+    "system": {
+      "type": "string",
+      "defaultValue": "NOT_SET",
+      "metadata": {
+        "description": "The logical system the component belongs to."
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "[parameters('system')]",
+      "metadata": {
+        "description": "The logical application the component belongs to. If not provided, defaults to the value of the 'system' parameter."
+      }
+    },
+    "projectRequestReference": {
+      "type": "string",
+      "defaultValue": "NOT_SET",
+      "metadata": {
+        "description": "The recognised reference of the project or work request that deployed the workload appended by some free text."
+      }
+    },
+    "resourceSME": {
+      "type": "string",
+      "defaultValue": "NOT_SET",
+      "metadata": {
+        "description": "The email address of the team (preferred) or individual responsible for implementing the resource during project execution."
+      }
+    },
+    "resourceOwner": {
+      "type": "string",
+      "defaultValue": "NOT_SET",
+      "metadata": {
+        "description": "The name of the person responsible for the project long-term (after production release)."
+      }
+    },
+    "workspaceName": {
+      "type": "string",
+      "defaultValue": "workplace-shared-oms-bslau-dev-ase",
+      "metadata": {
+        "description": "The name of the OMS workspace."
+      }
+    },
+    "workspaceResourceGroup": {
+      "type": "string",
+      "defaultValue": "workplace-shared-rg01-bslau-dev",
+      "metadata": {
+        "description": "The resource group of the OMS workspace."
+      }
+    },
+    "logicAppState": {
+      "type": "string",
+      "defaultValue": "Enabled",
+      "metadata": {
+        "description": "The default state of the Logic App."
+      },
+      "allowedValues": [
+        "Disabled",
+        "Enabled"
+      ]
+    },
+    "environmentName": {
+      "type": "string",
+      "defaultValue": "Development",
+      "metadata": {
+        "description": "Whether this resource is Dev/Test/Prod/etc."
+      },
+      "allowedValues": [
+        "Development",
+        "Test",
+        "Canary",
+        "Production"
+      ]
+    },   
+    "LogicAppLocation": {
+      "type": "string",
+      "minLength": 1,
+      "allowedValues": [
+        "[resourceGroup().location]",
+        "eastasia",
+        "southeastasia",
+        "centralus",
+        "eastus",
+        "eastus2",
+        "westus",
+        "northcentralus",
+        "southcentralus",
+        "northeurope",
+        "westeurope",
+        "japanwest",
+        "japaneast",
+        "brazilsouth",
+        "australiaeast",
+        "australiasoutheast",
+        "southindia",
+        "centralindia",
+        "westindia",
+        "canadacentral",
+        "canadaeast",
+        "uksouth",
+        "ukwest",
+        "westcentralus",
+        "westus2",
+        "koreacentral",
+        "koreasouth",
+        "francecentral",
+        "francesouth",
+        "uaecentral",
+        "southafricanorth",
+        "southafricawest"
+      ],
+      "defaultValue": "australiaeast"
+    },
+    "LogicAppName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "Portal2CopyDocumentsToNotes"
+    }
+  },
+  "variables": {
+    "logicApp": {
+      "resourceCode": "Logapp",
+      "name": "[toLower(concat(parameters('workload'), '-', parameters('logicapp_name'), '-', 'Logapp', '', '-', parameters('organisation'), '-', parameters('environmentType'), '-', parameters('regionCode')))]"
+    }
+  },
+  "resources": [
+    {
+      "name": "[variables('logicApp').name]",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[parameters('region')]",
+      "tags": {
+        "Application": "[parameters('application')]",
+        "Charge To": "[parameters('chargeTo')]",
+        "Environment": "[parameters('environmentName')]",
+        "Department": "[parameters('department')]",
+        "System": "[parameters('system')]",
+        "Project Request Reference": "[parameters('projectRequestReference')]",
+        "Resource SME": "[parameters('resourceSME')]",
+        "Resource Owner": "[parameters('resourceOwner')]"
+      },
+      "apiVersion": "2016-06-01",
+      "properties": {
+        "state": "Enabled",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "actions": {
+            "If_Any_File_Exists": {
+              "type": "If",
+              "expression": {
+                "and": [
+                  {
+                    "not": {
+                      "equals": [
+                        "@body('List_blobs')?['value']",
+                        ""
+                      ]
+                    }
+                  }
+                ]
+              },
+              "actions": {
+                "For_each": {
+                  "type": "Foreach",
+                  "foreach": "@body('List_blobs')?['value']",
+                  "actions": {
+                    "Despatch": {
+                      "type": "If",
+                      "expression": {
+                        "and": [
+                          {
+                            "contains": [
+                              "@items('For_each')?['Name']",
+                              "_Despatch_"
+                            ]
+                          }
+                        ]
+                      },
+                      "actions": {
+                        "Compose_Despatch": {
+                          "type": "Compose",
+                          "inputs": "@split(split(items('For_each')?['Name'],'_')[2],'.')[0]",
+                          "runAfter": {}
+                        },
+                        "Condition_Despatch": {
+                          "type": "If",
+                          "expression": {
+                            "and": [
+                              {
+                                "not": {
+                                  "equals": [
+                                    "@empty(body('Get_Shipments')?['value'])",
+                                    "@true"
+                                  ]
+                                }
+                              }
+                            ]
+                          },
+                          "actions": {
+                            "For_each_2": {
+                              "type": "Foreach",
+                              "foreach": "@body('Get_Shipments')?['value']",
+                              "actions": {
+                                "Copied_Shipment_File": {
+                                  "type": "ApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                      }
+                                    },
+                                    "method": "post",
+                                    "path": "/datasets/default/copyFile",
+                                    "queries": {
+                                      "source": "@items('For_each')?['Path']",
+                                      "destination": "@{concat('/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),'/')}",
+                                      "overwrite": false,
+                                      "queryParametersSingleEncoded": true
+                                    }
+                                  },
+                                  "runAfter": {
+                                    "Set_variable_CENoteGUID": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Create_a_new_attachment": {
+                                  "type": "ApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                                      }
+                                    },
+                                    "method": "post",
+                                    "body": {
+                                      "subject": "Note created on @{convertTimeZone(utcNow(),'UTC','AUS Eastern Standard Time','dd/MM/yyyy HH:mm:ss')}",
+                                      "notetext": "*WEB* ",
+                                      "isdocument": true,
+                                      "filename": "@{concat(variables('FileName'),'.azure.txt')}",
+                                      "mimetype": "@variables('FileType')",
+                                      "_objectid_value": "@items('For_each_2')?['mcs_shipmentid']",
+                                      "_objectid_type": "mcs_shipments"
+                                    },
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
+                                  },
+                                  "runAfter": {}
+                                },
+                                "PowerPortalParseDocument_2": {
+                                  "type": "Function",
+                                  "inputs": {
+                                    "body": {
+                                      "name": "@variables('AzureBlobAttachmentBody')"
+                                    },
+                                    "method": "POST",
+                                    "queries": {
+                                      "name": "@variables('AzureBlobAttachmentBody')"
+                                    },
+                                    "function": {
+                                      "id": "/subscriptions/90075c84-14cb-472a-95ae-66f6bf3ab137/resourceGroups/d365-rg01-bslau-dev/providers/Microsoft.Web/sites/PowerPortalFunctionApp/functions/PowerPortalParseDocument"
+                                    }
+                                  },
+                                  "runAfter": {
+                                    "SetAzureBlobAttachmentBody": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "SetAzureBlobAttachmentBody": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "AzureBlobAttachmentBody",
+                                    "value": "{\"Name\": \"@{variables('FileName')}\",\"Type\": \"@{variables('FileType')}\",\"Size\": @{variables('FileSize')},\"Url\": \"@{variables('FileURL')}\"}"
+                                  },
+                                  "runAfter": {
+                                    "SetCopiedfilePath": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "SetCopiedfilePath": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "FileURL",
+                                    "value": "@{concat('https://d365ssendstorbslaudevaes.blob.core.windows.net/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),variables('FileName'))}"
+                                  },
+                                  "runAfter": {
+                                    "Copied_Shipment_File": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable_2": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "AzureBlobAttachmentBody",
+                                    "value": ""
+                                  },
+                                  "runAfter": {
+                                    "PowerPortalParseDocument_2": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable_CENoteGUID": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "CENoteGUID",
+                                    "value": "@{replace(body('Create_a_new_attachment')?['annotationid'],'-','')}"
+                                  },
+                                  "runAfter": {
+                                    "Create_a_new_attachment": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Update_a_record": {
+                                  "type": "ApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                                      }
+                                    },
+                                    "method": "patch",
+                                    "body": {
+                                      "documentbody": "@variables('AzureBlobAttachmentBody')",
+                                      "_ownerid_type": "",
+                                      "_objectid_type": ""
+                                    },
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_new_attachment')?['annotationid']))}"
+                                  },
+                                  "runAfter": {
+                                    "Set_variable_2": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                }
+                              },
+                              "runAfter": {
+                                "Get_blob_content_Despatch": [
+                                  "Succeeded"
+                                ]
+                              }
+                            },
+                            "Get_blob_content_Despatch": {
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                  }
+                                },
+                                "method": "get",
+                                "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent(items('For_each')?['Path']))}/content",
+                                "queries": {
+                                  "inferContentType": true
+                                }
+                              },
+                              "runAfter": {}
+                            }
+                          },
+                          "runAfter": {
+                            "Get_Shipments": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Get_Shipments": {
+                          "type": "ApiConnection",
+                          "inputs": {
+                            "host": {
+                              "connection": {
+                                "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                              }
+                            },
+                            "method": "get",
+                            "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('mcs_shipments'))}/items",
+                            "queries": {
+                              "$filter": "mcs_shipmentno eq '@{outputs('Compose_Despatch')}'"
+                            }
+                          },
+                          "runAfter": {
+                            "Set_variable_SorceFileURL": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_FileName": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "FileName",
+                            "value": "@items('For_each')?['Name']"
+                          },
+                          "runAfter": {
+                            "Compose_Despatch": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_FileSize": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "FileSize",
+                            "value": "@{items('For_each')?['Size']}"
+                          },
+                          "runAfter": {
+                            "Set_variable_FileType": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_FileType": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "FileType",
+                            "value": "@items('For_each')?['MediaType']"
+                          },
+                          "runAfter": {
+                            "Set_variable_FileName": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_SorceFileURL": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "SourceFileURL",
+                            "value": "@items('For_each')?['Path']"
+                          },
+                          "runAfter": {
+                            "Set_variable_FileSize": [
+                              "Succeeded"
+                            ]
+                          }
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Invoice": {
+                      "type": "If",
+                      "expression": {
+                        "and": [
+                          {
+                            "contains": [
+                              "@items('For_each')?['Name']",
+                              "_Invoice_"
+                            ]
+                          }
+                        ]
+                      },
+                      "actions": {
+                        "Compose_Invoice": {
+                          "type": "Compose",
+                          "inputs": "@split(split(items('For_each')?['Name'],'_')[2],'.')[0]",
+                          "runAfter": {}
+                        },
+                        "Condition_Invoice": {
+                          "type": "If",
+                          "expression": {
+                            "and": [
+                              {
+                                "not": {
+                                  "equals": [
+                                    "@empty(body('Get_Invoices')?['value'])",
+                                    "@true"
+                                  ]
+                                }
+                              }
+                            ]
+                          },
+                          "actions": {
+                            "For_each_3": {
+                              "type": "Foreach",
+                              "foreach": "@body('Get_Invoices')?['value']",
+                              "actions": {
+                                "Copy_blob": {
+                                  "type": "ApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                      }
+                                    },
+                                    "method": "post",
+                                    "path": "/datasets/default/copyFile",
+                                    "queries": {
+                                      "source": "@items('For_each')?['Path']",
+                                      "destination": "@{concat('/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),'/')}",
+                                      "overwrite": false,
+                                      "queryParametersSingleEncoded": true
+                                    }
+                                  },
+                                  "runAfter": {
+                                    "Set_variable_CENoteGuid_Invoice": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Create_a_new_record_2": {
+                                  "type": "ApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                                      }
+                                    },
+                                    "method": "post",
+                                    "body": {
+                                      "subject": "Notes Created on  @{convertTimeZone(utcNow(),'UTC','AUS Eastern Standard Time','dd/MM/yyyy HH:mm:ss')}",
+                                      "notetext": "*WEB*",
+                                      "isdocument": true,
+                                      "filename": "@{concat(variables('FileName'),'.azure.txt')}",
+                                      "mimetype": "@variables('FileType')",
+                                      "_objectid_value": "@items('For_each_3')?['invoiceid']",
+                                      "_objectid_type": "invoices"
+                                    },
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
+                                  },
+                                  "runAfter": {}
+                                },
+                                "PowerPortalParseDocument": {
+                                  "type": "Function",
+                                  "inputs": {
+                                    "body": {
+                                      "name": "@variables('AzureBlobAttachmentBody')"
+                                    },
+                                    "method": "POST",
+                                    "queries": {
+                                      "name": "@variables('AzureBlobAttachmentBody')"
+                                    },
+                                    "function": {
+                                      "id": "/subscriptions/90075c84-14cb-472a-95ae-66f6bf3ab137/resourceGroups/d365-rg01-bslau-dev/providers/Microsoft.Web/sites/PowerPortalFunctionApp/functions/PowerPortalParseDocument"
+                                    }
+                                  },
+                                  "runAfter": {
+                                    "Set_variable_AzureBlobAttachmentBody_Invoice": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "AzureBlobAttachmentBody",
+                                    "value": ""
+                                  },
+                                  "runAfter": {
+                                    "PowerPortalParseDocument": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable_AzureBlobAttachmentBody_Invoice": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "AzureBlobAttachmentBody",
+                                    "value": "{\"Name\": \"@{variables('FileName')}\",\"Type\": \"@{variables('FileType')}\",\"Size\": @{variables('FileSize')},\"Url\": \"@{variables('FileURL')}\"}"
+                                  },
+                                  "runAfter": {
+                                    "Set_variable_Set_Copied_File_Path_Invoice": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable_CENoteGuid_Invoice": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "CENoteGUID",
+                                    "value": "@{replace(body('Create_a_new_record_2')?['annotationid'],'-','')}"
+                                  },
+                                  "runAfter": {
+                                    "Create_a_new_record_2": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable_Set_Copied_File_Path_Invoice": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "FileURL",
+                                    "value": "@{concat('https://d365ssendstorbslaudevaes.blob.core.windows.net/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),variables('FileName'))}"
+                                  },
+                                  "runAfter": {
+                                    "Copy_blob": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Update_a_record_invoice": {
+                                  "type": "ApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                                      }
+                                    },
+                                    "method": "patch",
+                                    "body": {
+                                      "documentbody": "@variables('AzureBlobAttachmentBody')",
+                                      "_ownerid_type": "",
+                                      "_objectid_type": ""
+                                    },
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_new_record_2')?['annotationid']))}"
+                                  },
+                                  "runAfter": {
+                                    "Set_variable": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                }
+                              },
+                              "runAfter": {
+                                "Get_blob_content_Invoice": [
+                                  "Succeeded"
+                                ]
+                              }
+                            },
+                            "Get_blob_content_Invoice": {
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                  }
+                                },
+                                "method": "get",
+                                "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent(items('For_each')?['Path']))}/content",
+                                "queries": {
+                                  "inferContentType": true
+                                }
+                              },
+                              "runAfter": {}
+                            }
+                          },
+                          "runAfter": {
+                            "Get_Invoices": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Get_Invoices": {
+                          "type": "ApiConnection",
+                          "inputs": {
+                            "host": {
+                              "connection": {
+                                "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                              }
+                            },
+                            "method": "get",
+                            "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('invoices'))}/items",
+                            "queries": {
+                              "$filter": "msdyn_invoicenumber eq '@{outputs('Compose_Invoice')}'"
+                            }
+                          },
+                          "runAfter": {
+                            "Set_variable_SourceFileURL_Invoice": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_FileName_Invoice": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "FileName",
+                            "value": "@items('For_each')?['Name']"
+                          },
+                          "runAfter": {
+                            "Set_variable_FileType_Invoice": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_FileSize_Invoice": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "FileSize",
+                            "value": "@{items('For_each')?['Size']}"
+                          },
+                          "runAfter": {
+                            "Set_variable_FileName_Invoice": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_FileType_Invoice": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "FileType",
+                            "value": "@items('For_each')?['MediaType']"
+                          },
+                          "runAfter": {
+                            "Compose_Invoice": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_SourceFileURL_Invoice": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "SourceFileURL",
+                            "value": "@items('For_each')?['Path']"
+                          },
+                          "runAfter": {
+                            "Set_variable_FileSize_Invoice": [
+                              "Succeeded"
+                            ]
+                          }
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Quotation": {
+                      "type": "If",
+                      "expression": {
+                        "and": [
+                          {
+                            "contains": [
+                              "@items('For_each')?['Name']",
+                              "_Quotation_"
+                            ]
+                          }
+                        ]
+                      },
+                      "actions": {
+                        "Compose": {
+                          "type": "Compose",
+                          "inputs": "@split(split(items('For_each')?['Name'],'_')[2],'.')[0]",
+                          "runAfter": {}
+                        },
+                        "Condition": {
+                          "type": "If",
+                          "expression": {
+                            "and": [
+                              {
+                                "not": {
+                                  "equals": [
+                                    "@empty(body('Get_Quote_Lines')?['value'])",
+                                    "@true"
+                                  ]
+                                }
+                              }
+                            ]
+                          },
+                          "actions": {
+                            "For_each_4": {
+                              "type": "Foreach",
+                              "foreach": "@body('Get_Quote_Lines')?['value']",
+                              "actions": {
+                                "Copy_blob_Quote_Line": {
+                                  "type": "ApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                      }
+                                    },
+                                    "method": "post",
+                                    "path": "/datasets/default/copyFile",
+                                    "queries": {
+                                      "source": "@items('For_each')?['Path']",
+                                      "destination": "@{concat('/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),'/')}",
+                                      "overwrite": false,
+                                      "queryParametersSingleEncoded": true
+                                    }
+                                  },
+                                  "runAfter": {
+                                    "Set_variable_CENoteGUID_QuoteLine": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Create_a_new_attachment_quotations": {
+                                  "type": "ApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                                      }
+                                    },
+                                    "method": "post",
+                                    "body": {
+                                      "subject": "Notes created on @{convertTimeZone(utcNow(),'UTC','AUS Eastern Standard Time','dd/MM/yyyy HH:mm:ss')}",
+                                      "notetext": "*WEB*",
+                                      "isdocument": true,
+                                      "filename": "@{concat(variables('FileName'),'.azure.txt')}",
+                                      "mimetype": "@variables('FileType')",
+                                      "_ownerid_type": "",
+                                      "_objectid_value": "@items('For_each_4')?['mcs_quotelineid']",
+                                      "_objectid_type": "mcs_quotelines"
+                                    },
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
+                                  },
+                                  "runAfter": {}
+                                },
+                                "PowerPortalParseDocument_3": {
+                                  "type": "Function",
+                                  "inputs": {
+                                    "body": {
+                                      "name": "@variables('AzureBlobAttachmentBody')"
+                                    },
+                                    "method": "POST",
+                                    "queries": {
+                                      "name": "@variables('AzureBlobAttachmentBody')"
+                                    },
+                                    "function": {
+                                      "id": "/subscriptions/90075c84-14cb-472a-95ae-66f6bf3ab137/resourceGroups/d365-rg01-bslau-dev/providers/Microsoft.Web/sites/PowerPortalFunctionApp/functions/PowerPortalParseDocument"
+                                    }
+                                  },
+                                  "runAfter": {
+                                    "Set_variable_AzureBlobAttachmentBody_Quotesline": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable_AzureBlobAttachmentBody_Quotesline": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "AzureBlobAttachmentBody",
+                                    "value": "{\"Name\": \"@{variables('FileName')}\",\"Type\": \"@{variables('FileType')}\",\"Size\": @{variables('FileSize')},\"Url\": \"@{variables('FileURL')}\"}"
+                                  },
+                                  "runAfter": {
+                                    "Set_variable_File_URL_Quote_Lines": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable_AzureBlob_Attachemnt_body_2": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "AzureBlobAttachmentBody",
+                                    "value": ""
+                                  },
+                                  "runAfter": {
+                                    "PowerPortalParseDocument_3": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable_CENoteGUID_QuoteLine": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "CENoteGUID",
+                                    "value": "@{replace(body('Create_a_new_attachment_quotations')?['annotationid'],'-','')}"
+                                  },
+                                  "runAfter": {
+                                    "Create_a_new_attachment_quotations": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable_File_URL_Quote_Lines": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "FileURL",
+                                    "value": "@{concat('https://d365ssendstorbslaudevaes.blob.core.windows.net/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),variables('FileName'))}"
+                                  },
+                                  "runAfter": {
+                                    "Copy_blob_Quote_Line": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Update_a_record_Quote_Line_Notes_": {
+                                  "type": "ApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                                      }
+                                    },
+                                    "method": "patch",
+                                    "body": {
+                                      "documentbody": "@variables('AzureBlobAttachmentBody')",
+                                      "_ownerid_type": "",
+                                      "_objectid_type": ""
+                                    },
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_new_attachment_quotations')?['annotationid']))}"
+                                  },
+                                  "runAfter": {
+                                    "Set_variable_AzureBlob_Attachemnt_body_2": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                }
+                              },
+                              "runAfter": {
+                                "Get_blob_content": [
+                                  "Succeeded"
+                                ]
+                              }
+                            },
+                            "Get_blob_content": {
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                  }
+                                },
+                                "method": "get",
+                                "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent(items('For_each')?['Path']))}/content",
+                                "queries": {
+                                  "inferContentType": true
+                                }
+                              },
+                              "runAfter": {}
+                            }
+                          },
+                          "runAfter": {
+                            "Get_Quote_Lines": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Get_Quote_Lines": {
+                          "type": "ApiConnection",
+                          "inputs": {
+                            "host": {
+                              "connection": {
+                                "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                              }
+                            },
+                            "method": "get",
+                            "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm'))}/tables/@{encodeURIComponent(encodeURIComponent('mcs_quotelines'))}/items",
+                            "queries": {
+                              "$filter": "mcs_quotenumber eq '@{outputs('Compose')}'"
+                            }
+                          },
+                          "runAfter": {
+                            "Set_variable_SourceFileURL": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_FileName_Quotations": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "FileName",
+                            "value": "@items('For_each')?['Name']"
+                          },
+                          "runAfter": {
+                            "Set_variable_FileType_Quotations": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_FileSize_Quotations": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "FileSize",
+                            "value": "@{items('For_each')?['Size']}"
+                          },
+                          "runAfter": {
+                            "Set_variable_FileName_Quotations": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_FileType_Quotations": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "FileType",
+                            "value": "@items('For_each')?['MediaType']"
+                          },
+                          "runAfter": {
+                            "Compose": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_SourceFileURL": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "SourceFileURL",
+                            "value": "@items('For_each')?['Path']"
+                          },
+                          "runAfter": {
+                            "Set_variable_FileSize_Quotations": [
+                              "Succeeded"
+                            ]
+                          }
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Statement": {
+                      "type": "If",
+                      "expression": {
+                        "and": [
+                          {
+                            "contains": [
+                              "@items('For_each')?['Name']",
+                              "_Statement_"
+                            ]
+                          }
+                        ]
+                      },
+                      "actions": {
+                        "Compose_Statement": {
+                          "type": "Compose",
+                          "inputs": "@split(split(items('For_each')?['Name'],'_')[2],'.')[0]",
+                          "runAfter": {}
+                        },
+                        "Condition_Statement": {
+                          "type": "If",
+                          "expression": {
+                            "and": [
+                              {
+                                "not": {
+                                  "equals": [
+                                    "@empty(body('Get_Statement')?['value'])",
+                                    "@true"
+                                  ]
+                                }
+                              }
+                            ]
+                          },
+                          "actions": {
+                            "For_each_5": {
+                              "type": "Foreach",
+                              "foreach": "@body('Get_Statement')?['value']",
+                              "actions": {
+                                "Copy_blob_Statement": {
+                                  "type": "ApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                      }
+                                    },
+                                    "method": "post",
+                                    "path": "/datasets/default/copyFile",
+                                    "queries": {
+                                      "source": "@items('For_each')?['Path']",
+                                      "destination": "@{concat('/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),'/')}",
+                                      "overwrite": false,
+                                      "queryParametersSingleEncoded": true
+                                    }
+                                  },
+                                  "runAfter": {
+                                    "Set_variable_CE_Note_GUID": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Create_a_Notes_record_Statement": {
+                                  "type": "ApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                                      }
+                                    },
+                                    "method": "post",
+                                    "body": {
+                                      "subject": "Notes Created on @{convertTimeZone(utcNow(),'UTC','AUS Eastern Standard Time','dd/MM/yyyy HH:mm:ss')}",
+                                      "notetext": "*WEB*",
+                                      "isdocument": true,
+                                      "filename": "@{concat(variables('FileName'),'.azure.txt')}",
+                                      "mimetype": "@variables('FileType')",
+                                      "_objectid_value": "@items('For_each_5')?['mcs_statementid']",
+                                      "_objectid_type": "invoices"
+                                    },
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
+                                  },
+                                  "runAfter": {}
+                                },
+                                "PowerPortalParseDocument_4": {
+                                  "type": "Function",
+                                  "inputs": {
+                                    "body": {
+                                      "name": "@variables('AzureBlobAttachmentBody')"
+                                    },
+                                    "method": "POST",
+                                    "queries": {
+                                      "name": "@variables('AzureBlobAttachmentBody')"
+                                    },
+                                    "function": {
+                                      "id": "/subscriptions/90075c84-14cb-472a-95ae-66f6bf3ab137/resourceGroups/d365-rg01-bslau-dev/providers/Microsoft.Web/sites/PowerPortalFunctionApp/functions/PowerPortalParseDocument"
+                                    }
+                                  },
+                                  "runAfter": {
+                                    "Set_variable_AzureBlobAttachment_Body_Statement": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable_AzureBlobAttachment_Body_Statement": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "AzureBlobAttachmentBody",
+                                    "value": "{\"Name\": \"@{variables('FileName')}\",\"Type\": \"@{variables('FileType')}\",\"Size\": @{variables('FileSize')},\"Url\": \"@{variables('FileURL')}\"}"
+                                  },
+                                  "runAfter": {
+                                    "Set_variable_File_URL_Statement": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable_AzureblobAttachementBody_2": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "AzureBlobAttachmentBody",
+                                    "value": ""
+                                  },
+                                  "runAfter": {
+                                    "PowerPortalParseDocument_4": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable_CE_Note_GUID": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "CENoteGUID",
+                                    "value": "@{replcae(body('Create_a_Notes_record_Statement')?['annotationid'],'-','')}"
+                                  },
+                                  "runAfter": {
+                                    "Create_a_Notes_record_Statement": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Set_variable_File_URL_Statement": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "FileURL",
+                                    "value": "@{concat('https://d365ssendstorbslaudevaes.blob.core.windows.net/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),variables('FileName'))}"
+                                  },
+                                  "runAfter": {
+                                    "Copy_blob_Statement": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                },
+                                "Update_a_record_Notes_Statement": {
+                                  "type": "ApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                                      }
+                                    },
+                                    "method": "patch",
+                                    "body": {
+                                      "documentbody": "@variables('AzureBlobAttachmentBody')",
+                                      "_ownerid_type": "",
+                                      "_objectid_type": ""
+                                    },
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_Notes_record_Statement')?['annotationid']))}"
+                                  },
+                                  "runAfter": {
+                                    "Set_variable_AzureblobAttachementBody_2": [
+                                      "Succeeded"
+                                    ]
+                                  }
+                                }
+                              },
+                              "runAfter": {
+                                "Get_blob_content_Statement": [
+                                  "Succeeded"
+                                ]
+                              }
+                            },
+                            "Get_blob_content_Statement": {
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                  }
+                                },
+                                "method": "get",
+                                "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent(items('For_each')?['Path']))}/content",
+                                "queries": {
+                                  "inferContentType": true
+                                }
+                              },
+                              "runAfter": {}
+                            }
+                          },
+                          "runAfter": {
+                            "Get_Statement": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Get_Statement": {
+                          "type": "ApiConnection",
+                          "inputs": {
+                            "host": {
+                              "connection": {
+                                "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                              }
+                            },
+                            "method": "get",
+                            "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('mcs_statements'))}/items",
+                            "queries": {
+                              "$filter": "mcs_name eq '@{outputs('Compose_Statement')}'"
+                            }
+                          },
+                          "runAfter": {
+                            "Set_variable_SourceFile_URL_Statement": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_FileSize_Statement": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "FileSize",
+                            "value": "@{items('For_each')?['Size']}"
+                          },
+                          "runAfter": {
+                            "Set_variable_FileType_Statement": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_FileType_Statement": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "FileType",
+                            "value": "@items('For_each')?['MediaType']"
+                          },
+                          "runAfter": {
+                            "Set_variable_File_Name_Statement": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_File_Name_Statement": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "FileName",
+                            "value": "@items('For_each')?['Name']"
+                          },
+                          "runAfter": {
+                            "Compose_Statement": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_variable_SourceFile_URL_Statement": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "SourceFileURL",
+                            "value": "@items('For_each')?['Path']"
+                          },
+                          "runAfter": {
+                            "Set_variable_FileSize_Statement": [
+                              "Succeeded"
+                            ]
+                          }
+                        }
+                      },
+                      "runAfter": {}
+                    }
+                  },
+                  "runAfter": {}
+                }
+              },
+              "runAfter": {
+                "List_blobs": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Initialize_variable_AzureBlobAttachmentBody": {
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "AzureBlobAttachmentBody",
+                    "type": "string"
+                  }
+                ]
+              },
+              "runAfter": {
+                "Initialize_variable_CENoteGUID": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Initialize_variable_CENoteGUID": {
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "CENoteGUID",
+                    "type": "string"
+                  }
+                ]
+              },
+              "runAfter": {}
+            },
+            "Initialize_variable_FileName": {
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "FileName",
+                    "type": "string"
+                  }
+                ]
+              },
+              "runAfter": {
+                "Initialize_variable_AzureBlobAttachmentBody": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Initialize_variable_FileSize": {
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "FileSize",
+                    "type": "string"
+                  }
+                ]
+              },
+              "runAfter": {
+                "Initialize_variable_FileName": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Initialize_variable_FileType": {
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "FileType",
+                    "type": "string"
+                  }
+                ]
+              },
+              "runAfter": {
+                "Initialize_variable_FileSize": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Initialize_variable_FileURL": {
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "FileURL",
+                    "type": "string"
+                  }
+                ]
+              },
+              "runAfter": {
+                "Initialize_variable_FileType": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Initialize_variable_SourceFileURL": {
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "SourceFileURL",
+                    "type": "string"
+                  }List_blobs
+                ]
+              },
+              "runAfter": {
+                "Initialize_variable_FileURL": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "List_blobs": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/datasets/default/foldersV2/@{encodeURIComponent(encodeURIComponent('JTJmZDM2NS1mb3RvcG9ydGFscGRm'))}",
+                "queries": {
+                  "nextPageMarker": "",
+                  "useFlatListing": false
+                }
+              },
+              "runAfter": {
+                "Initialize_variable_SourceFileURL": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "JTJmZDM2NS1mb3RvcG9ydGFscGRm": "/d365-fotoportalpdf"
+              }
+            }
+          },
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            }
+          },
+          "triggers": {
+            "Recurrence": {
+              "type": "Recurrence",
+              "recurrence": {
+                "frequency": "Month",
+                "interval": 3
+              }
+            }
+          },
+          "contentVersion": "1.0.0.0",
+          "outputs": {}
+        },
+        "parameters": {
+          "$connections": {
+            "value": {
+              "azureblob": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'azureblob')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('azureblob_1_Connection_Name'))]",
+                "connectionName": "[parameters('azureblob_1_Connection_Name')]"
+              },
+              "commondataservice": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'commondataservice')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_cds_name'))]",
+                "connectionName": "[parameters('connections_cds_name')]"
+              }
+            }
+          }
+        }
+      }
+      //"dependsOn": [
+      //  "[resourceId('Microsoft.Web/connections', parameters('azureblob_1_Connection_Name'))]",
+      //  "[resourceId('Microsoft.Web/connections', parameters('connections_cds_name'))]"
+      //]
+    }
+    //{
+    //  "type": "MICROSOFT.WEB/CONNECTIONS",
+    //  "apiVersion": "2018-07-01-preview",
+    //  "name": "[parameters('azureblob_1_Connection_Name')]",
+    //  "location": "australiaeast",
+    //  "properties": {
+    //    "api": {
+    //      "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'azureblob')]"
+    //    },
+    //    "displayName": "[parameters('azureblob_1_Connection_DisplayName')]",
+    //    "parameterValues": {
+    //      "accountName": "[parameters('azureblob_1_accountName')]",
+    //      "accessKey": "[parameters('azureblob_1_accessKey')]"
+    //    }
+    //  }
+    //},
+    //{
+    //  "type": "MICROSOFT.WEB/CONNECTIONS",
+    //  "apiVersion": "2018-07-01-preview",
+    //  "name": "[parameters('connections_cds_name')]",
+    //  "location": "australiaeast",
+    //  "properties": {
+    //    "api": {
+    //      "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'commondataservice')]"
+    //    },
+    //    "displayName": "[parameters('commondataservice_1_Connection_DisplayName')]",
+    //    "nonSecretParameterValues": {
+    //      "environment": "[parameters('commondataservice_1_environment')]"
+    //    }
+    //  }
+    //}
+  ],
+  "outputs": {}
+}
