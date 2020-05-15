@@ -1,12 +1,10 @@
-﻿{
+{
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {
-    "baseUrlToTemplates": {
-      "type": "string"
-    }
+  "parameters": {    
   },
   "variables": {
+    "sharedTemplateUrl": "https://github.com/karthiksai2828/templates/blob/master"
   },
   "resources": [
     {
@@ -17,11 +15,11 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[uri(deployment().properties.templateLink.uri, 'connections.json')]",
+          "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/Connections.json",
           "contentVersion": "1.0.0.0"
         },
         "parametersLink": {
-          "uri": "[uri(deployment().properties.templateLink.uri, 'connections.paramters.json')]",
+          "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/connections.parameters.json",
           "contentVersion": "1.0.0.0"
         }
       }
@@ -34,11 +32,28 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[uri(deployment().templateLink.uri, 'LogicApp.json')]",
+          "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/LogicApp.json",
           "contentVersion": "1.0.0.0"
         },
         "parametersLink": {
-          "uri": "[uri(deployment().templateLink.uri, 'LogicApp.parameters.json')]",
+          "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/LogicApp.parameters.json",
+          "contentVersion": "1.0.0.0"
+        }
+      }
+    },
+    {
+      "apiVersion": "2016-09-01",
+      "name": "LogicApp",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [ "connections" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/Portal2CopyDocumentsToNotes.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parametersLink": {
+          "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/Portal2CopyDocumentsToNotes.parameters.json",
           "contentVersion": "1.0.0.0"
         }
       }
