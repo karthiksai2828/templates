@@ -15,7 +15,10 @@
     //  "value": "australiaeast"
     //},
     "workload": {
-      "value": "azurelab1"
+      "value": "powerportal"
+    },
+    "logicapp_name": {
+      "value": "validatecontact"
     },
     "organisation": {
       "value": "bslau"
@@ -40,6 +43,9 @@
     },
     "region": {
       "value": "australiaeast"
+    },
+    "instance": {
+      "value": "org3f7ecf7f.crm6"
     }
   }
 }
