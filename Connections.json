@@ -53,7 +53,7 @@
     },
     "sharepointonline_1_Connection_Name": {
       "type": "string",
-      "defaultValue": "sharepointonline"
+      "defaultValue": "connection_sharepointonline"
     },
     "sharepointonline_1_token:TenantId": {
       "type": "string",
