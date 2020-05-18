@@ -30,17 +30,11 @@
       "value": "connection_commondataservice"
     },
     "azureblob_1_Connection_Name": {
-      "value": "azureblob"
-    },
-    "azureblob_1_Connection_DisplayName": {
-      "value": "d365_portal2_bslau_dev"
-    },
+      "value": "connection_azureblob"
+    },    
     "azureblob_1_accountName": {
       "value": "d365ssendstorbslaudevaes"
-    },
-    "azureblob_1_accessKey": {
-      "value": "d365ssendstorbslaudevaes"
-    },
+    },   
     "AzureBlobStorage": {
       "value": {
         "azureblob": "azureblob",
