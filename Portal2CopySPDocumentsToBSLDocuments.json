@@ -4,7 +4,7 @@
   "parameters": {
     "connections_cds_name": {
       "type": "string",
-      "defaultValue": "commondataservice"
+      "defaultValue": "connection_commondataservice"
     },
     "instance": {
       "defaultValue": "org3f7ecf7f.crm6",
