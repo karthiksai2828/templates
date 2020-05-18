@@ -6,7 +6,7 @@
       "value": "copydocuments"
     },
     "connections_cds_name": {
-      "value": "commondataservice"
+      "value": "connection_commondataservice"
     },
     "workload": {
       "value": "PowerPortal"
