@@ -41,23 +41,57 @@
         }
       }
     },
-    {
-      "apiVersion": "2016-09-01",
-      "name": "LogicApp",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [ "connections" ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/Portal2CopyDocumentsToNotes.json",
-          "contentVersion": "1.0.0.0"
-        },
-        "parametersLink": {
-          "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/Portal2CopyDocumentsToNotes.parameters.json",
-          "contentVersion": "1.0.0.0"
-        }
-      }
-    }
+    //{
+    //  "apiVersion": "2016-09-01",
+    //  "name": "Portal2CopyDocumentsToNotes",
+    //  "type": "Microsoft.Resources/deployments",
+    //  "dependsOn": [ "connections" ],
+    //  "properties": {
+    //    "mode": "Incremental",
+    //    "templateLink": {
+    //      "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/Portal2CopyDocumentsToNotes.json",
+    //      "contentVersion": "1.0.0.0"
+    //    },
+    //    "parametersLink": {
+    //      "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/Portal2CopyDocumentsToNotes.parameters.json",
+    //      "contentVersion": "1.0.0.0"
+    //    }
+    //  }
+    //},
+    //{
+    //  "apiVersion": "2016-09-01",
+    //  "name": "MakeBSLDocumentsInactive",
+    //  "type": "Microsoft.Resources/deployments",
+    //  "dependsOn": [ "connections" ],
+    //  "properties": {
+    //    "mode": "Incremental",
+    //    "templateLink": {
+    //      "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/MakeBSLDocumentsInactive.json",
+    //      "contentVersion": "1.0.0.0"
+    //    },
+    //    "parametersLink": {
+    //      "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/MakeBSLDocumentsInactive.parameters.json",
+    //      "contentVersion": "1.0.0.0"
+    //    }
+    //  }
+    //},
+    //{
+    //  "apiVersion": "2016-09-01",
+    //  "name": "Portal2CopySPDocumentsToBSLDocuments",
+    //  "type": "Microsoft.Resources/deployments",
+    //  "dependsOn": [ "connections" ],
+    //  "properties": {
+    //    "mode": "Incremental",
+    //    "templateLink": {
+    //      "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/Portal2CopySPDocumentsToBSLDocuments.json",
+    //      "contentVersion": "1.0.0.0"
+    //    },
+    //    "parametersLink": {
+    //      "uri": "https://raw.githubusercontent.com/karthiksai2828/templates/master/Portal2CopySPDocumentsToBSLDocuments.parameters.json",
+    //      "contentVersion": "1.0.0.0"
+    //    }
+    //  }
+    //}
   ],
   "outputs": {
   }
