@@ -2,16 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    //"workflows_ValidateContactAndAddAsPortalUser_name": {
-    //  "defaultValue": "ValidateContactAndAddAsPortalUserTestDep",
-    //  "type": "String"
-    //},
     "connections_azuread_name": {
-      "defaultValue": "azuread",
+      "defaultValue": "connection_azuread",
       "type": "string"
     },
     "connections_cds_name": {
-      "defaultValue": "commondataservice",
+      "defaultValue": "connection_commondataservice",
       "type": "string"
     },
     "instance": {
@@ -490,13 +486,13 @@
             "value": {
               "commondataservice": {
                 "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('region'), '/managedApis/', 'commondataservice')]",
-                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_azuread_name'))]",
-                "connectionName": "[parameters('connections_azuread_name')]"
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_cds_name'))]",
+                "connectionName": "[parameters('connections_cds_name')]"
               },
               "azuread": {
                 "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('region'), '/managedApis/', 'azuread')]",
-                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_cds_name'))]",
-                "connectionName": "[parameters('connections_cds_name')]"
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_azuread_name'))]",
+                "connectionName": "[parameters('connections_azuread_name')]"
               }
             }
           },
