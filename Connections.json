@@ -29,25 +29,15 @@
     },
     "azureblob_1_Connection_Name": {
       "type": "string",
-      "defaultValue": "azureblob"
-    },
-    "azureblob_1_Connection_DisplayName": {
-      "type": "string",
-      "defaultValue": "d365_portal2_bslau_dev"
-    },
+      "defaultValue": "connection_azureblob"
+    },    
     "azureblob_1_accountName": {
       "type": "string",
       "metadata": {
         "description": "Name of the storage account the connector should use."
       },
       "defaultValue": "d365ssendstorbslaudevaes"
-    },
-    "azureblob_1_accessKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Specify a valid primary/secondary storage account access key."
-      }
-    },
+    },    
     "AzureBlobStorage": {
       "type": "object"
     },
@@ -107,22 +97,22 @@
         //}
       }
     },
-    //{
-    //  "type": "MICROSOFT.WEB/CONNECTIONS",
-    //  "apiVersion": "2018-07-01-preview",
-    //  "name": "[parameters('azureblob_1_Connection_Name')]",
-    //  "location": "australiaeast",
-    //  "properties": {
-    //    "api": {
-    //      "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'azureblob')]"
-    //    },
-    //    "displayName": "[parameters('azureblob_1_Connection_DisplayName')]",
-    //    "parameterValues": {
-    //      "accountName": "[parameters('azureblob_1_accountName')]",
-    //      "accessKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', parameters('AzureBlobStorage')['storageAccountName']), '2017-06-01').keys[0].value]"
-    //    }
-    //  }
-    //},
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2018-07-01-preview",
+      "name": "[parameters('azureblob_1_Connection_Name')]",
+      "location": "australiaeast",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'azureblob')]"
+        },
+        "displayName": "[parameters('azureblob_1_Connection_Name')]",
+        "parameterValues": {
+          "accountName": "[parameters('azureblob_1_accountName')]",
+          "accessKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', parameters('AzureBlobStorage')['storageAccountName']), '2017-06-01').keys[0].value]"
+        }
+      }
+    },
     {
       "type": "MICROSOFT.WEB/CONNECTIONS",
       "apiVersion": "2018-07-01-preview",
