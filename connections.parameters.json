@@ -3,19 +3,31 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "connections_azuread_externalid": {
-      "value": "/subscriptions/90075c84-14cb-472a-95ae-66f6bf3ab137/resourceGroups/d365-rg01-bslau-dev/providers/Microsoft.Web/connections/azuread"
+      "value": "78872ca8-56cd-44d6-af6f-4b6263a8cf3c"
     },
     "connections_commondataservice_externalid": {
-      "value": "/subscriptions/90075c84-14cb-472a-95ae-66f6bf3ab137/resourceGroups/d365-rg01-bslau-dev/providers/Microsoft.Web/connections/commondataservice"
+      "value": "78872ca8-56cd-44d6-af6f-4b6263a8cf3c"
     },
     "LogicAppLocation": {
       "value": "australiaeast"
     },
     "connections_azuread_name": {
-      "value": "azuread"
+      "value": "connection_azuread"
+    },
+    "sharepointonline_1_Connection_Name": {
+      "value": "sharepointonline"
+    },
+    "sharepointonline_1_token:TenantId": {
+      "value": "78872ca8-56cd-44d6-af6f-4b6263a8cf3c"
+    },
+    "dynamicscrmonline_1_Connection_Name": {
+      "value": "dynamicscrmonline"
+    },
+    "dynamicscrmonline_1_token:TenantId": {
+      "value": "78872ca8-56cd-44d6-af6f-4b6263a8cf3c"
     },
     "connections_cds_name": {
-      "value": "commondataservice"
+      "value": "connection_commondataservice"
     },
     "azureblob_1_Connection_Name": {
       "value": "azureblob"
