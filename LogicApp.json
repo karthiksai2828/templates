@@ -10,6 +10,10 @@
       "defaultValue": "azuread",
       "type": "string"
     },
+    "connections_cds_name": {
+      "defaultValue": "commondataservice",
+      "type": "string"
+    },
     "instance": {
       "defaultValue": "org3f7ecf7f.crm6",
       "type": "string"
@@ -18,19 +22,6 @@
       "defaultValue": "validatecontact",
       "type": "string"
     },
-    "connections_cds_name": {
-      "defaultValue": "commondataservice",
-      "type": "string"
-    },
-    //"LogicAppLocation": {
-    //  "type": "string",
-    //  "minLength": 1,
-    //  "allowedValues": [
-    //    "[resourceGroup().location]",
-    //    "australiaeast"
-    //  ],
-    //  "defaultValue": "australiaeast"
-    //},
     "region": {
       "type": "string",
       "defaultValue": "australiaeast",
