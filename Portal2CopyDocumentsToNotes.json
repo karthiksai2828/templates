@@ -8,28 +8,15 @@
     },
     "azureblob_1_Connection_Name": {
       "type": "string",
-      "defaultValue": "azureblob"
-    },
-    "azureblob_1_Connection_DisplayName": {
-      "type": "string",
-      "defaultValue": "d365_portal2_bslau_dev"
-    },
-    "azureblob_1_accountName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the storage account the connector should use."
-      },
-      "defaultValue": "d365ssendstorbslaudevaes"
-    },
-    "azureblob_1_accessKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Specify a valid primary/secondary storage account access key."
-      }
+      "defaultValue": "connection_azureblob"
     },
     "connections_cds_name": {
       "type": "string",
       "defaultValue": "commondataservice"
+    },
+    "instance": {
+      "defaultValue": "org3f7ecf7f.crm6",
+      "type": "string"
     },
     "region": {
       "type": "string",
@@ -211,7 +198,7 @@
         "Canary",
         "Production"
       ]
-    },   
+    },
     "LogicAppLocation": {
       "type": "string",
       "minLength": 1,
@@ -381,7 +368,7 @@
                                       "_objectid_value": "@items('For_each_2')?['mcs_shipmentid']",
                                       "_objectid_type": "mcs_shipments"
                                     },
-                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
                                   },
                                   "runAfter": {}
                                 },
@@ -467,7 +454,7 @@
                                       "_ownerid_type": "",
                                       "_objectid_type": ""
                                     },
-                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_new_attachment')?['annotationid']))}"
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_new_attachment')?['annotationid']))}"
                                   },
                                   "runAfter": {
                                     "Set_variable_2": [
@@ -514,7 +501,7 @@
                               }
                             },
                             "method": "get",
-                            "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('mcs_shipments'))}/items",
+                            "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('mcs_shipments'))}/items",
                             "queries": {
                               "$filter": "mcs_shipmentno eq '@{outputs('Compose_Despatch')}'"
                             }
@@ -654,7 +641,7 @@
                                       "_objectid_value": "@items('For_each_3')?['invoiceid']",
                                       "_objectid_type": "invoices"
                                     },
-                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
                                   },
                                   "runAfter": {}
                                 },
@@ -740,7 +727,7 @@
                                       "_ownerid_type": "",
                                       "_objectid_type": ""
                                     },
-                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_new_record_2')?['annotationid']))}"
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_new_record_2')?['annotationid']))}"
                                   },
                                   "runAfter": {
                                     "Set_variable": [
@@ -787,7 +774,7 @@
                               }
                             },
                             "method": "get",
-                            "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('invoices'))}/items",
+                            "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('invoices'))}/items",
                             "queries": {
                               "$filter": "msdyn_invoicenumber eq '@{outputs('Compose_Invoice')}'"
                             }
@@ -928,7 +915,7 @@
                                       "_objectid_value": "@items('For_each_4')?['mcs_quotelineid']",
                                       "_objectid_type": "mcs_quotelines"
                                     },
-                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
                                   },
                                   "runAfter": {}
                                 },
@@ -1014,7 +1001,7 @@
                                       "_ownerid_type": "",
                                       "_objectid_type": ""
                                     },
-                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_new_attachment_quotations')?['annotationid']))}"
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_new_attachment_quotations')?['annotationid']))}"
                                   },
                                   "runAfter": {
                                     "Set_variable_AzureBlob_Attachemnt_body_2": [
@@ -1201,7 +1188,7 @@
                                       "_objectid_value": "@items('For_each_5')?['mcs_statementid']",
                                       "_objectid_type": "invoices"
                                     },
-                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
                                   },
                                   "runAfter": {}
                                 },
@@ -1287,7 +1274,7 @@
                                       "_ownerid_type": "",
                                       "_objectid_type": ""
                                     },
-                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_Notes_record_Statement')?['annotationid']))}"
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_Notes_record_Statement')?['annotationid']))}"
                                   },
                                   "runAfter": {
                                     "Set_variable_AzureblobAttachementBody_2": [
@@ -1334,7 +1321,7 @@
                               }
                             },
                             "method": "get",
-                            "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org3f7ecf7f.crm6'))}/tables/@{encodeURIComponent(encodeURIComponent('mcs_statements'))}/items",
+                            "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('mcs_statements'))}/items",
                             "queries": {
                               "$filter": "mcs_name eq '@{outputs('Compose_Statement')}'"
                             }
@@ -1505,7 +1492,7 @@
                   {
                     "name": "SourceFileURL",
                     "type": "string"
-                  }List_blobs
+                  }
                 ]
               },
               "runAfter": {
@@ -1543,6 +1530,10 @@
             "$connections": {
               "defaultValue": {},
               "type": "Object"
+            },
+            "instance": {
+              "defaultValue": "org3f7ecf7f.crm6",
+              "type": "string"
             }
           },
           "triggers": {
@@ -1571,45 +1562,13 @@
                 "connectionName": "[parameters('connections_cds_name')]"
               }
             }
+          },
+          "instance": {
+            "value": "[parameters('instance')]"
           }
         }
-      }
-      //"dependsOn": [
-      //  "[resourceId('Microsoft.Web/connections', parameters('azureblob_1_Connection_Name'))]",
-      //  "[resourceId('Microsoft.Web/connections', parameters('connections_cds_name'))]"
-      //]
-    }
-    //{
-    //  "type": "MICROSOFT.WEB/CONNECTIONS",
-    //  "apiVersion": "2018-07-01-preview",
-    //  "name": "[parameters('azureblob_1_Connection_Name')]",
-    //  "location": "australiaeast",
-    //  "properties": {
-    //    "api": {
-    //      "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'azureblob')]"
-    //    },
-    //    "displayName": "[parameters('azureblob_1_Connection_DisplayName')]",
-    //    "parameterValues": {
-    //      "accountName": "[parameters('azureblob_1_accountName')]",
-    //      "accessKey": "[parameters('azureblob_1_accessKey')]"
-    //    }
-    //  }
-    //},
-    //{
-    //  "type": "MICROSOFT.WEB/CONNECTIONS",
-    //  "apiVersion": "2018-07-01-preview",
-    //  "name": "[parameters('connections_cds_name')]",
-    //  "location": "australiaeast",
-    //  "properties": {
-    //    "api": {
-    //      "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'commondataservice')]"
-    //    },
-    //    "displayName": "[parameters('commondataservice_1_Connection_DisplayName')]",
-    //    "nonSecretParameterValues": {
-    //      "environment": "[parameters('commondataservice_1_environment')]"
-    //    }
-    //  }
-    //}
+      }      
+    }    
   ],
   "outputs": {}
 }
