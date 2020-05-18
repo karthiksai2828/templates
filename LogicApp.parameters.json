@@ -2,18 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    //"workflows_ValidateContactAndAddAsPortalUser_name": {
-    //  "value": "\"ValidateContactAndAddAsPortalUserTestDep"
-    //},
     "connections_azuread_name": {
-      "value": "azuread"
+      "value": "connection_azuread"
     },
     "connections_cds_name": {
-      "value": "commondataservice"
-    },
-    //"LogicAppLocation": {
-    //  "value": "australiaeast"
-    //},
+      "value": "connection_commondataservice"
+    },    
     "workload": {
       "value": "powerportal"
     },
