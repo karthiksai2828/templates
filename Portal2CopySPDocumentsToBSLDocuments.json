@@ -225,7 +225,7 @@
                   }
                 },
                 "method": "get",
-                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('parameters('instance')'))}/tables/@{encodeURIComponent(encodeURIComponent('sharepointdocumentlocations'))}/items",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('sharepointdocumentlocations'))}/items",
                 "queries": {
                   "$filter": "relativeurl eq 'mcs_bsldocument'"
                 }
@@ -467,7 +467,7 @@
                                       "_regardingobjectid_value": "@items('For_each_2')?['mcs_bsldocumentid']",
                                       "_regardingobjectid_type": "mcs_bsldocuments"
                                     },
-                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('parameters('instance')'))}/tables/@{encodeURIComponent(encodeURIComponent('sharepointdocumentlocations'))}/items"
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('sharepointdocumentlocations'))}/items"
                                   },
                                   "runAfter": {}
                                 }
@@ -523,7 +523,7 @@
                           }
                         },
                         "method": "get",
-                        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('parameters('instance')'))}/tables/@{encodeURIComponent(encodeURIComponent('sharepointdocumentlocations'))}/items",
+                        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('sharepointdocumentlocations'))}/items",
                         "queries": {
                           "$filter": "_regardingobjectid_value eq @{body('Get_BSL_Documents')?['value'][0]?['mcs_bsldocumentid']}"
                         }
@@ -546,7 +546,7 @@
                       }
                     },
                     "method": "get",
-                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('parameters('instance')'))}/tables/@{encodeURIComponent(encodeURIComponent('mcs_bsldocuments'))}/items",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('mcs_bsldocuments'))}/items",
                     "queries": {
                       "$filter": "mcs_name eq '@{outputs('Get_File_Name')}'"
                     }
