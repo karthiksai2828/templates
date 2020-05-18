@@ -3,20 +3,20 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "connections_azuread_externalid": {
-      "defaultValue": "/subscriptions/90075c84-14cb-472a-95ae-66f6bf3ab137/resourceGroups/d365-rg01-bslau-dev/providers/Microsoft.Web/connections/azuread",
-      "type": "String"
+      "defaultValue": "78872ca8-56cd-44d6-af6f-4b6263a8cf3c",
+      "type": "string"
     },
     "connections_commondataservice_externalid": {
-      "defaultValue": "/subscriptions/90075c84-14cb-472a-95ae-66f6bf3ab137/resourceGroups/d365-rg01-bslau-dev/providers/Microsoft.Web/connections/commondataservice",
-      "type": "String"
+      "defaultValue": "78872ca8-56cd-44d6-af6f-4b6263a8cf3c",
+      "type": "string"
     },
     "connections_azuread_name": {
-      "defaultValue": "azuread",
-      "type": "String"
+      "defaultValue": "connection_azuread",
+      "type": "string"
     },
     "connections_cds_name": {
-      "defaultValue": "commondataservice",
-      "type": "String"
+      "defaultValue": "connection_commondataservice",
+      "type": "string"
     },
     "LogicAppLocation": {
       "type": "string",
@@ -50,6 +50,28 @@
     },
     "AzureBlobStorage": {
       "type": "object"
+    },
+    "sharepointonline_1_Connection_Name": {
+      "type": "string",
+      "defaultValue": "sharepointonline"
+    },
+    "sharepointonline_1_token:TenantId": {
+      "type": "string",
+      "defaultValue": "78872ca8-56cd-44d6-af6f-4b6263a8cf3c",
+      "metadata": {
+        "description": "The tenant ID of for the Azure Active Directory application"
+      }
+    },
+    "dynamicscrmonline_1_Connection_Name": {
+      "type": "string",
+      "defaultValue": "dynamicscrmonline"
+    },
+    "dynamicscrmonline_1_token:TenantId": {
+      "type": "string",
+      "defaultValue": "78872ca8-56cd-44d6-af6f-4b6263a8cf3c",
+      "metadata": {
+        "description": "The tenant ID for the Azure Active Directory application"
+      }
     }
   },
   "variables": {
@@ -84,7 +106,53 @@
         //  "environment": "[parameters('connections_commondataservice_externalid')]"
         //}
       }
-    }    
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2018-07-01-preview",
+      "name": "[parameters('azureblob_1_Connection_Name')]",
+      "location": "australiaeast",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'azureblob')]"
+        },
+        "displayName": "[parameters('azureblob_1_Connection_DisplayName')]",
+        "parameterValues": {
+          "accountName": "[parameters('azureblob_1_accountName')]",
+          "accessKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', parameters('AzureBlobStorage')['storageAccountName']), '2017-06-01').keys[0].value]"
+        }
+      }
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2018-07-01-preview",
+      "name": "[parameters('sharepointonline_1_Connection_Name')]",
+      "location": "australiaeast",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'sharepointonline')]"
+        },
+        "displayName": "[parameters('sharepointonline_1_Connection_Name')]",
+        "nonSecretParameterValues": {
+          "token:TenantId": "[parameters('sharepointonline_1_token:TenantId')]"
+        }
+      }
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2018-07-01-preview",
+      "name": "[parameters('dynamicscrmonline_1_Connection_Name')]",
+      "location": "australiaeast",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'dynamicscrmonline')]"
+        },
+        "displayName": "[parameters('dynamicscrmonline_1_Connection_Name')]",
+        "nonSecretParameterValues": {
+          "token:TenantId": "[parameters('dynamicscrmonline_1_token:TenantId')]"
+        }
+      }
+    }
   ],
   "outputs": {
   }
