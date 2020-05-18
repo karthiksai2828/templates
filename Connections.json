@@ -64,7 +64,7 @@
     },
     "dynamicscrmonline_1_Connection_Name": {
       "type": "string",
-      "defaultValue": "dynamicscrmonline"
+      "defaultValue": "connection_dynamicscrmonline"
     },
     "dynamicscrmonline_1_token:TenantId": {
       "type": "string",
@@ -137,22 +137,22 @@
           "token:TenantId": "[parameters('sharepointonline_1_token:TenantId')]"
         }
       }
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2018-07-01-preview",
+      "name": "[parameters('dynamicscrmonline_1_Connection_Name')]",
+      "location": "australiaeast",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'dynamicscrmonline')]"
+        },
+        "displayName": "[parameters('dynamicscrmonline_1_Connection_Name')]",
+        "nonSecretParameterValues": {
+          "token:TenantId": "[parameters('dynamicscrmonline_1_token:TenantId')]"
+        }
+      }
     }
-    //{
-    //  "type": "MICROSOFT.WEB/CONNECTIONS",
-    //  "apiVersion": "2018-07-01-preview",
-    //  "name": "[parameters('dynamicscrmonline_1_Connection_Name')]",
-    //  "location": "australiaeast",
-    //  "properties": {
-    //    "api": {
-    //      "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'dynamicscrmonline')]"
-    //    },
-    //    "displayName": "[parameters('dynamicscrmonline_1_Connection_Name')]",
-    //    "nonSecretParameterValues": {
-    //      "token:TenantId": "[parameters('dynamicscrmonline_1_token:TenantId')]"
-    //    }
-    //  }
-    //}
   ],
   "outputs": {
   }
