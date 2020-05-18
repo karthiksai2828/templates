@@ -1,0 +1,48 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "connections_cds_name": {
+      "value": "commondataservice"
+    },
+    "workload": {
+      "value": "powerportal"
+    },
+    "logicapp_name": {
+      "value": "copyspdocuments"
+    },
+    "organisation": {
+      "value": "bslau"
+    },
+    "environmentType": {
+      "value": "dev"
+    },
+    "environmentName": {
+      "value": "Development"
+    },
+    "regionCode": {
+      "value": "aes"
+    },
+    "workspaceName": {
+      "value": "workplace-shared-oms-bslau-dev-ase"
+    },
+    "workspaceResourceGroup": {
+      "value": "workplace-shared-rg01-bslau-dev"
+    },
+    "logicAppState": {
+      "value": "Enabled"
+    },
+    "region": {
+      "value": "australiaeast"
+    },
+    "instance": {
+      "value": "org3f7ecf7f.crm6"
+    },
+    "sharepointonline_1_Connection_Name": {
+      "value": "connection_sharepointonline"
+    },
+    "sharepoint_site": {
+      "value": "https://bluescopeltd.sharepoint.com/sites/bsl-d365-portal2"
+    }
+  }
+}

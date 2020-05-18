@@ -1,0 +1,717 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "connections_cds_name": {
+      "type": "string",
+      "defaultValue": "commondataservice"
+    },
+    "instance": {
+      "defaultValue": "org3f7ecf7f.crm6",
+      "type": "string"
+    },
+    "logicapp_name": {
+      "defaultValue": "validatecontact",
+      "type": "string"
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "australiaeast",
+      "metadata": {
+        "description": "The Azure region that the resource is deployed to."
+      },
+      "allowedValues": [
+        "eastasia",
+        "southeastasia",
+        "centralus",
+        "eastus",
+        "eastus2",
+        "westus",
+        "northcentralus",
+        "southcentralus",
+        "northeurope",
+        "westeurope",
+        "japanwest",
+        "japaneast",
+        "brazilsouth",
+        "australiaeast",
+        "australiasoutheast",
+        "southindia",
+        "centralindia",
+        "westindia",
+        "canadacentral",
+        "canadaeast",
+        "uksouth",
+        "ukwest",
+        "westcentralus",
+        "westus2",
+        "[resourceGroup().location]"
+      ]
+    },
+    "workload": {
+      "type": "string",
+      "defaultValue": "workplace-cntntf",
+      "metadata": {
+        "description": "The broad purpose of the resource."
+      }
+    },
+    "organisation": {
+      "type": "string",
+      "defaultValue": "bslau",
+      "metadata": {
+        "description": "The organisation that the resource group or resource is owned by."
+      }
+    },
+    "environmentType": {
+      "type": "string",
+      "defaultValue": "dev",
+      "metadata": {
+        "description": "Whether this resource is Dev/Test/Prod/etc."
+      },
+      "allowedValues": [
+        "dev",
+        "tst",
+        "prod",
+        "can"
+      ]
+    },
+    "regionCode": {
+      "type": "string",
+      "defaultValue": "aes",
+      "metadata": {
+        "description": "The Azure region code that the resource is deployed to."
+      },
+      "allowedValues": [
+        "eas",
+        "sea",
+        "cus",
+        "eus",
+        "eus2",
+        "wus",
+        "nus",
+        "sus",
+        "neu",
+        "weu",
+        "jws",
+        "jes",
+        "brs",
+        "aes",
+        "ase",
+        "sin",
+        "cin",
+        "win",
+        "ccn",
+        "ces",
+        "uks",
+        "ukw",
+        "wcu",
+        "wus2"
+      ]
+    },
+    "chargeTo": {
+      "type": "string",
+      "defaultValue": "NOT_SET",
+      "metadata": {
+        "description": "The cost centre that the resource group or resource should be billed to."
+      }
+    },
+    "department": {
+      "type": "string",
+      "defaultValue": "NOT_SET",
+      "metadata": {
+        "description": "The name of the department the resource group or resource was provisioned for."
+      }
+    },
+    "system": {
+      "type": "string",
+      "defaultValue": "NOT_SET",
+      "metadata": {
+        "description": "The logical system the component belongs to."
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "[parameters('system')]",
+      "metadata": {
+        "description": "The logical application the component belongs to. If not provided, defaults to the value of the 'system' parameter."
+      }
+    },
+    "projectRequestReference": {
+      "type": "string",
+      "defaultValue": "NOT_SET",
+      "metadata": {
+        "description": "The recognised reference of the project or work request that deployed the workload appended by some free text."
+      }
+    },
+    "resourceSME": {
+      "type": "string",
+      "defaultValue": "NOT_SET",
+      "metadata": {
+        "description": "The email address of the team (preferred) or individual responsible for implementing the resource during project execution."
+      }
+    },
+    "resourceOwner": {
+      "type": "string",
+      "defaultValue": "NOT_SET",
+      "metadata": {
+        "description": "The name of the person responsible for the project long-term (after production release)."
+      }
+    },
+    "workspaceName": {
+      "type": "string",
+      "defaultValue": "workplace-shared-oms-bslau-dev-ase",
+      "metadata": {
+        "description": "The name of the OMS workspace."
+      }
+    },
+    "workspaceResourceGroup": {
+      "type": "string",
+      "defaultValue": "workplace-shared-rg01-bslau-dev",
+      "metadata": {
+        "description": "The resource group of the OMS workspace."
+      }
+    },
+    "logicAppState": {
+      "type": "string",
+      "defaultValue": "Enabled",
+      "metadata": {
+        "description": "The default state of the Logic App."
+      },
+      "allowedValues": [
+        "Disabled",
+        "Enabled"
+      ]
+    },
+    "environmentName": {
+      "type": "string",
+      "defaultValue": "Development",
+      "metadata": {
+        "description": "Whether this resource is Dev/Test/Prod/etc."
+      },
+      "allowedValues": [
+        "Development",
+        "Test",
+        "Canary",
+        "Production"
+      ]
+    },
+    "sharepointonline_1_Connection_Name": {
+      "type": "string",
+      "defaultValue": "connection_sharepointonline"
+    },
+    "sharepoint_site": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "logicApp": {
+      "resourceCode": "Logapp",
+      "name": "[toLower(concat(parameters('workload'), '-', parameters('logicapp_name'), '-', 'Logapp', '', '-', parameters('organisation'), '-', parameters('environmentType'), '-', parameters('regionCode')))]"
+    }
+  },
+  "resources": [
+    {
+      "properties": {
+        "state": "[parameters('logicAppState')]",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "actions": {
+            "Get_mcs_bsldocument_SP_Document_Location": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['commondataservice_1']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('parameters('instance')'))}/tables/@{encodeURIComponent(encodeURIComponent('sharepointdocumentlocations'))}/items",
+                "queries": {
+                  "$filter": "relativeurl eq 'mcs_bsldocument'"
+                }
+              },
+              "runAfter": {
+                "List_folder": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Initialize_variable_FileLength": {
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "FileLength",
+                    "type": "integer",
+                    "value": 0
+                  }
+                ]
+              },
+              "runAfter": {
+                "Initialize_variable_FileName": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Initialize_variable_FileName": {
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "FileName",
+                    "type": "string",
+                    "value": "a"
+                  }
+                ]
+              },
+              "runAfter": {
+                "Initialize_variable_FullFileName": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Initialize_variable_FullFileName": {
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "FullFileName",
+                    "type": "string",
+                    "value": "a"
+                  }
+                ]
+              },
+              "runAfter": {}
+            },
+            "List_folder": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sharepointonline_1']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/datasets/@{encodeURIComponent(encodeURIComponent(parameters('sharepoint_site')))}/folders/@{encodeURIComponent('%252fSecure%2bDocuments')}"
+              },
+              "runAfter": {
+                "Initialize_variable_FileLength": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "%252fSecure%2bDocuments": "/Secure Documents"
+              }
+            },
+            "Loop_through_all_files_from_Secure_Document_folder": {
+              "type": "Foreach",
+              "foreach": "@body('List_folder')",
+              "actions": {
+                "Condition_2": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "startsWith": [
+                          "@variables('FullFileName')",
+                          "@'BSLCPL_'"
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Set_variable": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "FullFileName",
+                        "value": "@{substring(variables('FileName'),0,sub(variables('FileLength'),6))}"
+                      },
+                      "runAfter": {
+                        "Set_variable_FileLength": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Set_variable_3": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "FileName",
+                        "value": "@{split(variables('FullFileName'),'BSLCPL_')[1]}"
+                      },
+                      "runAfter": {}
+                    },
+                    "Set_variable_FileLength": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "FileLength",
+                        "value": "@length(variables('FileName'))"
+                      },
+                      "runAfter": {
+                        "Set_variable_3": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Set_FullFileName": [
+                      "Succeeded"
+                    ]
+                  },
+                  "else": {
+                    "actions": {
+                      "Set_variable_4": {
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "FileName",
+                          "value": "@variables('FullFileName')"
+                        },
+                        "runAfter": {}
+                      }
+                    }
+                  }
+                },
+                "Condition_BSL_Documents": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@empty(body('Get_BSL_Documents')?['value'])",
+                          false
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Condition": {
+                      "type": "If",
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@empty(body('Get_Document_Location_for_BSL_Documents')?['value'])",
+                              "@true"
+                            ]
+                          }
+                        ]
+                      },
+                      "actions": {
+                        "For_each_2": {
+                          "type": "Foreach",
+                          "foreach": "@body('Get_BSL_Documents')?['value']",
+                          "actions": {
+                            "Create_file": {
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['sharepointonline_1']['connectionId']"
+                                  }
+                                },
+                                "method": "post",
+                                "body": "@body('Get_file_content')",
+                                "path": "/datasets/@{encodeURIComponent(encodeURIComponent(parameters('sharepoint_site')))}/files",
+                                "queries": {
+                                  "folderPath": "@{concat(body('Create_new_folder')?['{Path}'],body('Create_new_folder')?['{Name}'])}",
+                                  "name": "@items('Loop_through_all_files_from_Secure_Document_folder')?['Name']",
+                                  "queryParametersSingleEncoded": true
+                                }
+                              },
+                              "runAfter": {
+                                "Create_new_folder": [
+                                  "Succeeded"
+                                ]
+                              }
+                            },
+                            "Create_new_folder": {
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['sharepointonline_1']['connectionId']"
+                                  }
+                                },
+                                "method": "post",
+                                "body": {
+                                  "path": "@{outputs('Get_File_Name')}"
+                                },
+                                "path": "/datasets/@{encodeURIComponent(encodeURIComponent(parameters('sharepoint_site')))}/tables/@{encodeURIComponent(encodeURIComponent('9710f46d-a286-4e44-8da6-7e5593714ab2'))}/createnewfolder"
+                              },
+                              "runAfter": {
+                                "For_each_3": [
+                                  "Succeeded"
+                                ]
+                              }
+                            },
+                            "For_each_3": {
+                              "type": "Foreach",
+                              "foreach": "@body('Get_mcs_bsldocument_SP_Document_Location')?['value']",
+                              "actions": {
+                                "Create_Document_Location": {
+                                  "type": "ApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['commondataservice_1']['connectionId']"
+                                      }
+                                    },
+                                    "method": "post",
+                                    "body": {
+                                      "name": "@{outputs('Get_File_Name')}",
+                                      "servicetype": 0,
+                                      "relativeurl": "@{outputs('Get_File_Name')}",
+                                      "_ownerid_type": "systemusers",
+                                      "_parentsiteorlocation_value": "@items('For_each_3')?['sharepointdocumentlocationid']",
+                                      "_parentsiteorlocation_type": "sharepointdocumentlocations",
+                                      "_regardingobjectid_value": "@items('For_each_2')?['mcs_bsldocumentid']",
+                                      "_regardingobjectid_type": "mcs_bsldocuments"
+                                    },
+                                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('parameters('instance')'))}/tables/@{encodeURIComponent(encodeURIComponent('sharepointdocumentlocations'))}/items"
+                                  },
+                                  "runAfter": {}
+                                }
+                              },
+                              "runAfter": {}
+                            }
+                          },
+                          "runAfter": {}
+                        }
+                      },
+                      "runAfter": {
+                        "Get_Document_Location_for_BSL_Documents": [
+                          "Succeeded"
+                        ]
+                      },
+                      "else": {
+                        "actions": {
+                          "For_each": {
+                            "type": "Foreach",
+                            "foreach": "@body('Get_Document_Location_for_BSL_Documents')?['value']",
+                            "actions": {
+                              "Create_file_2": {
+                                "type": "ApiConnection",
+                                "inputs": {
+                                  "host": {
+                                    "connection": {
+                                      "name": "@parameters('$connections')['sharepointonline_1']['connectionId']"
+                                    }
+                                  },
+                                  "method": "post",
+                                  "body": "@body('Get_file_content')",
+                                  "path": "/datasets/@{encodeURIComponent(encodeURIComponent(parameters('sharepoint_site')))}/files",
+                                  "queries": {
+                                    "folderPath": "/mcs_bsldocument/@{items('For_each')?['relativeurl']}",
+                                    "name": "@items('Loop_through_all_files_from_Secure_Document_folder')?['Name']",
+                                    "queryParametersSingleEncoded": true
+                                  }
+                                },
+                                "runAfter": {}
+                              }
+                            },
+                            "runAfter": {}
+                          }
+                        }
+                      }
+                    },
+                    "Get_Document_Location_for_BSL_Documents": {
+                      "type": "ApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['commondataservice_1']['connectionId']"
+                          }
+                        },
+                        "method": "get",
+                        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('parameters('instance')'))}/tables/@{encodeURIComponent(encodeURIComponent('sharepointdocumentlocations'))}/items",
+                        "queries": {
+                          "$filter": "_regardingobjectid_value eq @{body('Get_BSL_Documents')?['value'][0]?['mcs_bsldocumentid']}"
+                        }
+                      },
+                      "runAfter": {}
+                    }
+                  },
+                  "runAfter": {
+                    "Get_BSL_Documents": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Get_BSL_Documents": {
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['commondataservice_1']['connectionId']"
+                      }
+                    },
+                    "method": "get",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('parameters('instance')'))}/tables/@{encodeURIComponent(encodeURIComponent('mcs_bsldocuments'))}/items",
+                    "queries": {
+                      "$filter": "mcs_name eq '@{outputs('Get_File_Name')}'"
+                    }
+                  },
+                  "runAfter": {
+                    "Get_File_Name": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Get_File_Name": {
+                  "type": "Compose",
+                  "inputs": "@variables('FullFileName')",
+                  "runAfter": {
+                    "Condition_2": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Get_file_content": {
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['sharepointonline_1']['connectionId']"
+                      }
+                    },
+                    "method": "get",
+                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(parameters('sharepoint_site')))}/files/@{encodeURIComponent(items('Loop_through_all_files_from_Secure_Document_folder')?['Id'])}/content",
+                    "queries": {
+                      "inferContentType": true
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Set_FullFileName": {
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "FullFileName",
+                    "value": "@{split(items('Loop_through_all_files_from_Secure_Document_folder')?['Name'],'.')[0]}"
+                  },
+                  "runAfter": {
+                    "Get_file_content": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Set_variable_2": {
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "FileName",
+                    "value": "a"
+                  },
+                  "runAfter": {
+                    "Get_file_content": [
+                      "Failed",
+                      "Skipped",
+                      "TimedOut"
+                    ]
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_mcs_bsldocument_SP_Document_Location": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            },
+            "DynamicsCE-la": {
+              "defaultValue": {
+                "commondataservice": "commondataservice",
+                "connectionname": "co-aue-dynamicscrmonline",
+                "org": "org3f7ecf7f.crm"
+              },
+              "type": "Object"
+            },
+            "SharePoint-la": {
+              "defaultValue": {
+                "connectionname": "co-aue-sp",
+                "invoicelibrary": "b57fa3a3-5bcf-41eb-a7e4-00c49ac792a7",
+                "quotelibrary": "b9f085fc-b7d6-4131-bbf0-356c4b741e9c",
+                "sharepointonline": "sharepointonline",
+                "shipmentlibrary": "5c6c6ff5-d1f1-4598-875f-221665777489",
+                "statementlibrary": "36866b16-b267-4b9b-8823-4d93ad114778"                
+              },
+              "type": "Object"
+            },
+            "StorageAccount-la": {
+              "defaultValue": {
+                "azureblob": "azureblob",
+                "connectionname": "co-aue-blob",
+                "container": "d365-fotoportalpdf",
+                "storageaccountname": "d365ssendstorbslaudevaes"
+              },
+              "type": "Object"
+            },
+            "instance": {
+              "defaultValue": "",
+              "type": "string"
+            },
+            "sharepoint_site": {
+              "type": "string",
+              "defaultValue": ""
+            }
+          },
+          "triggers": {
+            "Recurrence": {
+              "type": "Recurrence",
+              "recurrence": {
+                "frequency": "Day",
+                "interval": 1
+              }
+            }
+          },
+          "contentVersion": "1.0.0.0",
+          "outputs": {}
+        },
+        "parameters": {
+          "$connections": {
+            "value": {
+              "commondataservice_1": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'commondataservice')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_cds_name'))]",
+                "connectionName": "[parameters('connections_cds_name')]"
+              },
+              "sharepointonline_1": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'australiaeast', '/managedApis/', 'sharepointonline')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('sharepointonline_1_Connection_Name'))]",
+                "connectionName": "[parameters('sharepointonline_1_Connection_Name')]"
+              }
+            }
+          },
+          "instance": {
+            "value": "[parameters('instance')]"
+          },
+          "sharepoint_site": {
+            "value": "https://bluescopeltd.sharepoint.com/sites/bsl-d365-portal2"
+          }
+        }
+      },
+      "name": "[variables('logicApp').name]",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[parameters('region')]",
+      "tags": {
+        "Application": "[parameters('application')]",
+        "Charge To": "[parameters('chargeTo')]",
+        "Environment": "[parameters('environmentName')]",
+        "Department": "[parameters('department')]",
+        "System": "[parameters('system')]",
+        "Project Request Reference": "[parameters('projectRequestReference')]",
+        "Resource SME": "[parameters('resourceSME')]",
+        "Resource Owner": "[parameters('resourceOwner')]"
+      },
+      "apiVersion": "2016-06-01"
+      //"dependsOn": [
+      //  "[resourceId('Microsoft.Web/connections', parameters('connections_cds_name'))]",
+      //  "[resourceId('Microsoft.Web/connections', parameters('sharepointonline_1_Connection_Name'))]"
+      //]
+    }    
+  ],
+  "outputs": {}
+}
