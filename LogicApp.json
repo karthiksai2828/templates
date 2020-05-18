@@ -455,7 +455,7 @@
               "type": "Object"
             },
             "instance": {
-              "defaultValue": "crm6",
+              "defaultValue": "org3f7ecf7f.crm6",
               "type": "string"
             }
           },
