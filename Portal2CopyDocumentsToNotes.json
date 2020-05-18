@@ -1615,6 +1615,9 @@
                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_cds_name'))]",
                 "connectionName": "[parameters('connections_cds_name')]"
               }
+            },
+            "instance": {
+              "value": "[parameters('instance')]"
             }
           }
         }
