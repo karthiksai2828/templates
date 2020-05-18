@@ -650,12 +650,12 @@
               "type": "Object"
             },
             "instance": {
-              "defaultValue": "",
+              "defaultValue": "org3f7ecf7f.crm6",
               "type": "string"
             },
             "sharepoint_site": {
               "type": "string",
-              "defaultValue": ""
+              "defaultValue": "https://bluescopeltd.sharepoint.com/sites/bsl-d365-portal2"
             }
           },
           "triggers": {
