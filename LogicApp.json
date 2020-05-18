@@ -268,7 +268,7 @@
                           }
                         },
                         "method": "post",
-                        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent([parameters('instance')]))}/tables/@{encodeURIComponent(encodeURIComponent('adx_externalidentities'))}/items"
+                        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('adx_externalidentities'))}/items"
                       }
                     },
                     "Update_a_record": {
@@ -290,7 +290,7 @@
                           }
                         },
                         "method": "patch",
-                        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent([parameters('instance')]))}/tables/@{encodeURIComponent(encodeURIComponent('contacts'))}/items/@{encodeURIComponent(encodeURIComponent(triggerBody()?['contactid']))}"
+                        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('contacts'))}/items/@{encodeURIComponent(encodeURIComponent(triggerBody()?['contactid']))}"
                       }
                     }
                   },
@@ -314,7 +314,7 @@
                             }
                           },
                           "method": "patch",
-                          "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent([parameters('instance')]))}/tables/@{encodeURIComponent(encodeURIComponent('contacts'))}/items/@{encodeURIComponent(encodeURIComponent(triggerBody()?['contactid']))}"
+                          "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('contacts'))}/items/@{encodeURIComponent(encodeURIComponent(triggerBody()?['contactid']))}"
                         }
                       }
                     }
@@ -457,6 +457,10 @@
             "$connections": {
               "defaultValue": {},
               "type": "Object"
+            },
+            "instance": {
+              "defaultValue": "org3f7ecf7f.crm6",
+              "type": "string"
             }
           },
           "triggers": {
@@ -471,7 +475,7 @@
                     "name": "@parameters('$connections')['commondataservice']['connectionId']"
                   }
                 },
-                "path": "/datasets/@{encodeURIComponent(encodeURIComponent([parameters('instance')]))}/tables/@{encodeURIComponent(encodeURIComponent('contacts'))}/onnewitemswebhook",
+                "path": "/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('contacts'))}/onnewitemswebhook",
                 "queries": {
                   "scope": "Organization"
                 }
@@ -495,6 +499,9 @@
                 "connectionName": "[parameters('connections_cds_name')]"
               }
             }
+          },
+          "instance": {
+            "value": "[parameters('instance')]"
           }
         }
       },
