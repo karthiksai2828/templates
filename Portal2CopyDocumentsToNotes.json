@@ -252,22 +252,8 @@
   },
   "resources": [
     {
-      "name": "[variables('logicApp').name]",
-      "type": "Microsoft.Logic/workflows",
-      "location": "[parameters('region')]",
-      "tags": {
-        "Application": "[parameters('application')]",
-        "Charge To": "[parameters('chargeTo')]",
-        "Environment": "[parameters('environmentName')]",
-        "Department": "[parameters('department')]",
-        "System": "[parameters('system')]",
-        "Project Request Reference": "[parameters('projectRequestReference')]",
-        "Resource SME": "[parameters('resourceSME')]",
-        "Resource Owner": "[parameters('resourceOwner')]"
-      },
-      "apiVersion": "2016-06-01",
       "properties": {
-        "state": "Enabled",
+        "state": "[parameters('logicAppState')]",
         "definition": {
           "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
           "actions": {
@@ -297,7 +283,7 @@
                           {
                             "contains": [
                               "@items('For_each')?['Name']",
-                              "_Despatch_"
+                              "_DespatchNote_"
                             ]
                           }
                         ]
@@ -323,6 +309,23 @@
                             ]
                           },
                           "actions": {
+                            "Delete_blob": {
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                  }
+                                },
+                                "method": "delete",
+                                "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent(items('For_each')?['Id']))}"
+                              },
+                              "runAfter": {
+                                "For_each_2": [
+                                  "Succeeded"
+                                ]
+                              }
+                            },
                             "For_each_2": {
                               "type": "Foreach",
                               "foreach": "@body('Get_Shipments')?['value']",
@@ -351,26 +354,26 @@
                                   }
                                 },
                                 "Create_a_new_attachment": {
+                                  "runAfter": {},
                                   "type": "ApiConnection",
                                   "inputs": {
+                                    "body": {
+                                      "_objectid_type": "mcs_shipments",
+                                      "_objectid_value": "@items('For_each_2')?['mcs_shipmentid']",
+                                      "filename": "@{concat(variables('FileName'),'.azure.txt')}",
+                                      "isdocument": true,
+                                      "mimetype": "@variables('FileType')",
+                                      "notetext": "*WEB* ",
+                                      "subject": "Note created on @{convertTimeZone(utcNow(),'UTC','AUS Eastern Standard Time','dd/MM/yyyy HH:mm:ss')}"
+                                    },
                                     "host": {
                                       "connection": {
                                         "name": "@parameters('$connections')['commondataservice']['connectionId']"
                                       }
                                     },
                                     "method": "post",
-                                    "body": {
-                                      "subject": "Note created on @{convertTimeZone(utcNow(),'UTC','AUS Eastern Standard Time','dd/MM/yyyy HH:mm:ss')}",
-                                      "notetext": "*WEB* ",
-                                      "isdocument": true,
-                                      "filename": "@{concat(variables('FileName'),'.azure.txt')}",
-                                      "mimetype": "@variables('FileType')",
-                                      "_objectid_value": "@items('For_each_2')?['mcs_shipmentid']",
-                                      "_objectid_type": "mcs_shipments"
-                                    },
                                     "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
-                                  },
-                                  "runAfter": {}
+                                  }
                                 },
                                 "PowerPortalParseDocument_2": {
                                   "type": "Function",
@@ -408,7 +411,7 @@
                                   "type": "SetVariable",
                                   "inputs": {
                                     "name": "FileURL",
-                                    "value": "@{concat('https://d365ssendstorbslaudevaes.blob.core.windows.net/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),variables('FileName'))}"
+                                    "value": "@{concat('https://d365ssendstorbslaudevaes.blob.core.windows.net/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),'/',variables('FileName'))}"
                                   },
                                   "runAfter": {
                                     "Copied_Shipment_File": [
@@ -420,7 +423,7 @@
                                   "type": "SetVariable",
                                   "inputs": {
                                     "name": "AzureBlobAttachmentBody",
-                                    "value": ""
+                                    "value": "@{body('PowerPortalParseDocument_2')}"
                                   },
                                   "runAfter": {
                                     "PowerPortalParseDocument_2": [
@@ -441,25 +444,25 @@
                                   }
                                 },
                                 "Update_a_record": {
+                                  "runAfter": {
+                                    "Set_variable_2": [
+                                      "Succeeded"
+                                    ]
+                                  },
                                   "type": "ApiConnection",
                                   "inputs": {
+                                    "body": {
+                                      "_objectid_type": "",
+                                      "_ownerid_type": "",
+                                      "documentbody": "@variables('AzureBlobAttachmentBody')"
+                                    },
                                     "host": {
                                       "connection": {
                                         "name": "@parameters('$connections')['commondataservice']['connectionId']"
                                       }
                                     },
                                     "method": "patch",
-                                    "body": {
-                                      "documentbody": "@variables('AzureBlobAttachmentBody')",
-                                      "_ownerid_type": "",
-                                      "_objectid_type": ""
-                                    },
                                     "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_new_attachment')?['annotationid']))}"
-                                  },
-                                  "runAfter": {
-                                    "Set_variable_2": [
-                                      "Succeeded"
-                                    ]
                                   }
                                 }
                               },
@@ -493,6 +496,11 @@
                           }
                         },
                         "Get_Shipments": {
+                          "runAfter": {
+                            "Set_variable_SorceFileURL": [
+                              "Succeeded"
+                            ]
+                          },
                           "type": "ApiConnection",
                           "inputs": {
                             "host": {
@@ -505,11 +513,6 @@
                             "queries": {
                               "$filter": "mcs_shipmentno eq '@{outputs('Compose_Despatch')}'"
                             }
-                          },
-                          "runAfter": {
-                            "Set_variable_SorceFileURL": [
-                              "Succeeded"
-                            ]
                           }
                         },
                         "Set_variable_FileName": {
@@ -596,6 +599,23 @@
                             ]
                           },
                           "actions": {
+                            "Delete_blob_2": {
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                  }
+                                },
+                                "method": "delete",
+                                "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent(items('For_each')?['Id']))}"
+                              },
+                              "runAfter": {
+                                "For_each_3": [
+                                  "Succeeded"
+                                ]
+                              }
+                            },
                             "For_each_3": {
                               "type": "Foreach",
                               "foreach": "@body('Get_Invoices')?['value']",
@@ -624,26 +644,26 @@
                                   }
                                 },
                                 "Create_a_new_record_2": {
+                                  "runAfter": {},
                                   "type": "ApiConnection",
                                   "inputs": {
+                                    "body": {
+                                      "_objectid_type": "invoices",
+                                      "_objectid_value": "@items('For_each_3')?['invoiceid']",
+                                      "filename": "@{concat(variables('FileName'),'.azure.txt')}",
+                                      "isdocument": true,
+                                      "mimetype": "@variables('FileType')",
+                                      "notetext": "*WEB*",
+                                      "subject": "Notes Created on  @{convertTimeZone(utcNow(),'UTC','AUS Eastern Standard Time','dd/MM/yyyy HH:mm:ss')}"
+                                    },
                                     "host": {
                                       "connection": {
                                         "name": "@parameters('$connections')['commondataservice']['connectionId']"
                                       }
                                     },
                                     "method": "post",
-                                    "body": {
-                                      "subject": "Notes Created on  @{convertTimeZone(utcNow(),'UTC','AUS Eastern Standard Time','dd/MM/yyyy HH:mm:ss')}",
-                                      "notetext": "*WEB*",
-                                      "isdocument": true,
-                                      "filename": "@{concat(variables('FileName'),'.azure.txt')}",
-                                      "mimetype": "@variables('FileType')",
-                                      "_objectid_value": "@items('For_each_3')?['invoiceid']",
-                                      "_objectid_type": "invoices"
-                                    },
                                     "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
-                                  },
-                                  "runAfter": {}
+                                  }
                                 },
                                 "PowerPortalParseDocument": {
                                   "type": "Function",
@@ -669,7 +689,7 @@
                                   "type": "SetVariable",
                                   "inputs": {
                                     "name": "AzureBlobAttachmentBody",
-                                    "value": ""
+                                    "value": "@{body('PowerPortalParseDocument')}"
                                   },
                                   "runAfter": {
                                     "PowerPortalParseDocument": [
@@ -705,7 +725,7 @@
                                   "type": "SetVariable",
                                   "inputs": {
                                     "name": "FileURL",
-                                    "value": "@{concat('https://d365ssendstorbslaudevaes.blob.core.windows.net/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),variables('FileName'))}"
+                                    "value": "@{concat('https://d365ssendstorbslaudevaes.blob.core.windows.net/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),'/',variables('FileName'))}"
                                   },
                                   "runAfter": {
                                     "Copy_blob": [
@@ -714,25 +734,25 @@
                                   }
                                 },
                                 "Update_a_record_invoice": {
+                                  "runAfter": {
+                                    "Set_variable": [
+                                      "Succeeded"
+                                    ]
+                                  },
                                   "type": "ApiConnection",
                                   "inputs": {
+                                    "body": {
+                                      "_objectid_type": "",
+                                      "_ownerid_type": "",
+                                      "documentbody": "@variables('AzureBlobAttachmentBody')"
+                                    },
                                     "host": {
                                       "connection": {
                                         "name": "@parameters('$connections')['commondataservice']['connectionId']"
                                       }
                                     },
                                     "method": "patch",
-                                    "body": {
-                                      "documentbody": "@variables('AzureBlobAttachmentBody')",
-                                      "_ownerid_type": "",
-                                      "_objectid_type": ""
-                                    },
                                     "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_new_record_2')?['annotationid']))}"
-                                  },
-                                  "runAfter": {
-                                    "Set_variable": [
-                                      "Succeeded"
-                                    ]
                                   }
                                 }
                               },
@@ -766,6 +786,11 @@
                           }
                         },
                         "Get_Invoices": {
+                          "runAfter": {
+                            "Set_variable_SourceFileURL_Invoice": [
+                              "Succeeded"
+                            ]
+                          },
                           "type": "ApiConnection",
                           "inputs": {
                             "host": {
@@ -778,11 +803,6 @@
                             "queries": {
                               "$filter": "msdyn_invoicenumber eq '@{outputs('Compose_Invoice')}'"
                             }
-                          },
-                          "runAfter": {
-                            "Set_variable_SourceFileURL_Invoice": [
-                              "Succeeded"
-                            ]
                           }
                         },
                         "Set_variable_FileName_Invoice": {
@@ -851,7 +871,7 @@
                       "actions": {
                         "Compose": {
                           "type": "Compose",
-                          "inputs": "@split(split(items('For_each')?['Name'],'_')[2],'.')[0]",
+                          "inputs": "@split(split(split(items('For_each')?['Name'],'_')[2],'.')[0],'-')[0]",
                           "runAfter": {}
                         },
                         "Condition": {
@@ -869,6 +889,23 @@
                             ]
                           },
                           "actions": {
+                            "Delete_blob_4": {
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                  }
+                                },
+                                "method": "delete",
+                                "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent(items('For_each')?['Id']))}"
+                              },
+                              "runAfter": {
+                                "For_each_4": [
+                                  "Succeeded"
+                                ]
+                              }
+                            },
                             "For_each_4": {
                               "type": "Foreach",
                               "foreach": "@body('Get_Quote_Lines')?['value']",
@@ -897,27 +934,27 @@
                                   }
                                 },
                                 "Create_a_new_attachment_quotations": {
+                                  "runAfter": {},
                                   "type": "ApiConnection",
                                   "inputs": {
+                                    "body": {
+                                      "_objectid_type": "mcs_quotelines",
+                                      "_objectid_value": "@items('For_each_4')?['mcs_quotelineid']",
+                                      "_ownerid_type": "",
+                                      "filename": "@{concat(variables('FileName'),'.azure.txt')}",
+                                      "isdocument": true,
+                                      "mimetype": "@variables('FileType')",
+                                      "notetext": "*WEB*",
+                                      "subject": "Notes created on @{convertTimeZone(utcNow(),'UTC','AUS Eastern Standard Time','dd/MM/yyyy HH:mm:ss')}"
+                                    },
                                     "host": {
                                       "connection": {
                                         "name": "@parameters('$connections')['commondataservice']['connectionId']"
                                       }
                                     },
                                     "method": "post",
-                                    "body": {
-                                      "subject": "Notes created on @{convertTimeZone(utcNow(),'UTC','AUS Eastern Standard Time','dd/MM/yyyy HH:mm:ss')}",
-                                      "notetext": "*WEB*",
-                                      "isdocument": true,
-                                      "filename": "@{concat(variables('FileName'),'.azure.txt')}",
-                                      "mimetype": "@variables('FileType')",
-                                      "_ownerid_type": "",
-                                      "_objectid_value": "@items('For_each_4')?['mcs_quotelineid']",
-                                      "_objectid_type": "mcs_quotelines"
-                                    },
                                     "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
-                                  },
-                                  "runAfter": {}
+                                  }
                                 },
                                 "PowerPortalParseDocument_3": {
                                   "type": "Function",
@@ -955,7 +992,7 @@
                                   "type": "SetVariable",
                                   "inputs": {
                                     "name": "AzureBlobAttachmentBody",
-                                    "value": ""
+                                    "value": "@{body('PowerPortalParseDocument_3')}"
                                   },
                                   "runAfter": {
                                     "PowerPortalParseDocument_3": [
@@ -979,7 +1016,7 @@
                                   "type": "SetVariable",
                                   "inputs": {
                                     "name": "FileURL",
-                                    "value": "@{concat('https://d365ssendstorbslaudevaes.blob.core.windows.net/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),variables('FileName'))}"
+                                    "value": "@{concat('https://d365ssendstorbslaudevaes.blob.core.windows.net/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),'/',variables('FileName'))}"
                                   },
                                   "runAfter": {
                                     "Copy_blob_Quote_Line": [
@@ -988,25 +1025,25 @@
                                   }
                                 },
                                 "Update_a_record_Quote_Line_Notes_": {
+                                  "runAfter": {
+                                    "Set_variable_AzureBlob_Attachemnt_body_2": [
+                                      "Succeeded"
+                                    ]
+                                  },
                                   "type": "ApiConnection",
                                   "inputs": {
+                                    "body": {
+                                      "_objectid_type": "",
+                                      "_ownerid_type": "",
+                                      "documentbody": "@variables('AzureBlobAttachmentBody')"
+                                    },
                                     "host": {
                                       "connection": {
                                         "name": "@parameters('$connections')['commondataservice']['connectionId']"
                                       }
                                     },
                                     "method": "patch",
-                                    "body": {
-                                      "documentbody": "@variables('AzureBlobAttachmentBody')",
-                                      "_ownerid_type": "",
-                                      "_objectid_type": ""
-                                    },
                                     "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_new_attachment_quotations')?['annotationid']))}"
-                                  },
-                                  "runAfter": {
-                                    "Set_variable_AzureBlob_Attachemnt_body_2": [
-                                      "Succeeded"
-                                    ]
                                   }
                                 }
                               },
@@ -1040,6 +1077,11 @@
                           }
                         },
                         "Get_Quote_Lines": {
+                          "runAfter": {
+                            "Set_variable_SourceFileURL": [
+                              "Succeeded"
+                            ]
+                          },
                           "type": "ApiConnection",
                           "inputs": {
                             "host": {
@@ -1052,11 +1094,6 @@
                             "queries": {
                               "$filter": "mcs_quotenumber eq '@{outputs('Compose')}'"
                             }
-                          },
-                          "runAfter": {
-                            "Set_variable_SourceFileURL": [
-                              "Succeeded"
-                            ]
                           }
                         },
                         "Set_variable_FileName_Quotations": {
@@ -1143,6 +1180,23 @@
                             ]
                           },
                           "actions": {
+                            "Delete_blob_3": {
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                  }
+                                },
+                                "method": "delete",
+                                "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent(items('For_each')?['Id']))}"
+                              },
+                              "runAfter": {
+                                "For_each_5": [
+                                  "Succeeded"
+                                ]
+                              }
+                            },
                             "For_each_5": {
                               "type": "Foreach",
                               "foreach": "@body('Get_Statement')?['value']",
@@ -1171,26 +1225,26 @@
                                   }
                                 },
                                 "Create_a_Notes_record_Statement": {
+                                  "runAfter": {},
                                   "type": "ApiConnection",
                                   "inputs": {
+                                    "body": {
+                                      "_objectid_type": "invoices",
+                                      "_objectid_value": "@items('For_each_5')?['mcs_statementid']",
+                                      "filename": "@{concat(variables('FileName'),'.azure.txt')}",
+                                      "isdocument": true,
+                                      "mimetype": "@variables('FileType')",
+                                      "notetext": "*WEB*",
+                                      "subject": "Notes Created on @{convertTimeZone(utcNow(),'UTC','AUS Eastern Standard Time','dd/MM/yyyy HH:mm:ss')}"
+                                    },
                                     "host": {
                                       "connection": {
                                         "name": "@parameters('$connections')['commondataservice']['connectionId']"
                                       }
                                     },
                                     "method": "post",
-                                    "body": {
-                                      "subject": "Notes Created on @{convertTimeZone(utcNow(),'UTC','AUS Eastern Standard Time','dd/MM/yyyy HH:mm:ss')}",
-                                      "notetext": "*WEB*",
-                                      "isdocument": true,
-                                      "filename": "@{concat(variables('FileName'),'.azure.txt')}",
-                                      "mimetype": "@variables('FileType')",
-                                      "_objectid_value": "@items('For_each_5')?['mcs_statementid']",
-                                      "_objectid_type": "invoices"
-                                    },
                                     "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items"
-                                  },
-                                  "runAfter": {}
+                                  }
                                 },
                                 "PowerPortalParseDocument_4": {
                                   "type": "Function",
@@ -1228,7 +1282,7 @@
                                   "type": "SetVariable",
                                   "inputs": {
                                     "name": "AzureBlobAttachmentBody",
-                                    "value": ""
+                                    "value": "@{body('PowerPortalParseDocument_4')}"
                                   },
                                   "runAfter": {
                                     "PowerPortalParseDocument_4": [
@@ -1252,7 +1306,7 @@
                                   "type": "SetVariable",
                                   "inputs": {
                                     "name": "FileURL",
-                                    "value": "@{concat('https://d365ssendstorbslaudevaes.blob.core.windows.net/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),variables('FileName'))}"
+                                    "value": "@{concat('https://d365ssendstorbslaudevaes.blob.core.windows.net/d365-smartsend-blobcont-portal2/',variables('CENoteGUID'),'/',variables('FileName'))}"
                                   },
                                   "runAfter": {
                                     "Copy_blob_Statement": [
@@ -1261,25 +1315,25 @@
                                   }
                                 },
                                 "Update_a_record_Notes_Statement": {
+                                  "runAfter": {
+                                    "Set_variable_AzureblobAttachementBody_2": [
+                                      "Succeeded"
+                                    ]
+                                  },
                                   "type": "ApiConnection",
                                   "inputs": {
+                                    "body": {
+                                      "_objectid_type": "",
+                                      "_ownerid_type": "",
+                                      "documentbody": "@variables('AzureBlobAttachmentBody')"
+                                    },
                                     "host": {
                                       "connection": {
                                         "name": "@parameters('$connections')['commondataservice']['connectionId']"
                                       }
                                     },
                                     "method": "patch",
-                                    "body": {
-                                      "documentbody": "@variables('AzureBlobAttachmentBody')",
-                                      "_ownerid_type": "",
-                                      "_objectid_type": ""
-                                    },
                                     "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent(parameters('instance')))}/tables/@{encodeURIComponent(encodeURIComponent('annotations'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_a_Notes_record_Statement')?['annotationid']))}"
-                                  },
-                                  "runAfter": {
-                                    "Set_variable_AzureblobAttachementBody_2": [
-                                      "Succeeded"
-                                    ]
                                   }
                                 }
                               },
@@ -1313,6 +1367,11 @@
                           }
                         },
                         "Get_Statement": {
+                          "runAfter": {
+                            "Set_variable_SourceFile_URL_Statement": [
+                              "Succeeded"
+                            ]
+                          },
                           "type": "ApiConnection",
                           "inputs": {
                             "host": {
@@ -1325,11 +1384,6 @@
                             "queries": {
                               "$filter": "mcs_name eq '@{outputs('Compose_Statement')}'"
                             }
-                          },
-                          "runAfter": {
-                            "Set_variable_SourceFile_URL_Statement": [
-                              "Succeeded"
-                            ]
                           }
                         },
                         "Set_variable_FileSize_Statement": {
@@ -1562,12 +1616,23 @@
                 "connectionName": "[parameters('connections_cds_name')]"
               }
             }
-          },
-          "instance": {
-            "value": "[parameters('instance')]"
           }
         }
-      }      
+      },
+      "name": "[variables('logicApp').name]",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[parameters('region')]",
+      "tags": {
+        "Application": "[parameters('application')]",
+        "Charge To": "[parameters('chargeTo')]",
+        "Environment": "[parameters('environmentName')]",
+        "Department": "[parameters('department')]",
+        "System": "[parameters('system')]",
+        "Project Request Reference": "[parameters('projectRequestReference')]",
+        "Resource SME": "[parameters('resourceSME')]",
+        "Resource Owner": "[parameters('resourceOwner')]"
+      },
+      "apiVersion": "2016-06-01"      
     }    
   ],
   "outputs": {}
