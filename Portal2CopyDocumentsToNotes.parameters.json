@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
@@ -34,6 +34,12 @@
     },
     "region": {
       "value": "australiaeast"
+    },
+    "instance": {
+      "value": "org3f7ecf7f.crm6"
+    },
+    "azureblob_1_Connection_Name": {
+      "value": "connection_azureblob"
     }
   }
 }
