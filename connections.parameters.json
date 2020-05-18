@@ -15,7 +15,7 @@
       "value": "connection_azuread"
     },
     "sharepointonline_1_Connection_Name": {
-      "value": "sharepointonline"
+      "value": "connection_sharepointonline"
     },
     "sharepointonline_1_token:TenantId": {
       "value": "78872ca8-56cd-44d6-af6f-4b6263a8cf3c"
@@ -47,10 +47,7 @@
         "name": "co-aue-fcs-azureblob",
         "storageAccountName": "d365ssendstorbslaudevaes",
         "storageAccountType": "Standard_LRS",
-        "containerName": "d365-fotoportalpdf"
-        //"extractDirectory": "VendorsDeltaFile",
-        //"errorDirectory": "FailedRuns",
-        //"outputFile": "Vendors extract to CE.csv"
+        "containerName": "d365-fotoportalpdf"        
       }
     }
   }
